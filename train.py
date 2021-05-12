@@ -48,8 +48,8 @@ class Run(object):
         self.score = tf.reduce_mean(score)
         # self.objective = tf.math.abs(score) - tf.cast(y, dtype=tf.float32) * (self.lmbda*self.d_reg + self.beta*self.w_reg)
         # self.objective = tf.math.abs(score) - self.lmbda*self.d_reg + self.beta*self.w_reg
-        # self.objective = score - tf.cast(y, dtype=tf.float32) * (self.lmbda*self.d_reg + self.beta*self.w_reg)
-        self.objective = score - self.lmbda*self.d_reg + self.beta*self.w_reg
+        self.objective = score - tf.cast(y, dtype=tf.float32) * (self.lmbda*self.d_reg + self.beta*self.w_reg)
+        # self.objective = score - self.lmbda*self.d_reg + self.beta*self.w_reg
         self.objective = tf.reduce_mean(self.objective)
 
         # - Optimizers, savers, etc
