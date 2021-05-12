@@ -1,0 +1,30 @@
+#!/bin/bash
+
+#$ -S /bin/bash
+
+#$ -wd /home/bgaujac/AD
+
+#$ -l gpu=True
+#$ -l tmem=1G
+#$ -l h_rt=1:00:00
+
+#$ -t 1-4
+
+#$ -N linline
+
+source /share/apps/examples/source_files/python/python-3.6.4.source
+source /share/apps/examples/source_files/cuda/cuda-10.0.source
+
+# test local
+# python3 run.py --save_model --save_data --num_it 30000 --learn_w --lmbda 1 --out_dir line_linear --scr_nonlin linear
+# python3 run.py --save_model --save_data --num_it 30000 --learn_w --lmbda 1 --out_dir line_cubic --scr_nonlin cubic
+# python3 run.py --save_model --save_data --num_it 30000 --learn_w --lmbda 1 --out_dir line_sinh --scr_nonlin sinh
+
+# array
+python3 run_array.py --save_model --save_data --num_it 30000 --learn_w --out_dir line_linear --scr_nonlin linear --exp_id $SGE_TASK_ID
+# python3 run_array.py --save_model --save_data --num_it 30000 --learn_w --out_dir line_cubic --scr_nonlin cubic --exp_id $SGE_TASK_ID
+# python3 run_array.py --save_model --save_data --num_it 30000 --learn_w --out_dir line_sinh --scr_nonlin sinh --exp_id $SGE_TASK_ID
+
+# testing
+# python3 run_test.py --data_dir ../data --dataset mnist --out_dir mnist_zdim2_econv_dconv --full_cov_mat --net_archi conv_per_mix_econv_dconv --mode plot --zdim 2 --weights_file trained-VAE-final-200000 --model VAE --res_dir res_1_2021_03_31_10_03
+# python3 run_test.py --data_dir ../data --dataset mnist --out_dir mnist_zdim10_econv_dconv --net_archi conv_per_mix_econv_dconv --mode plot --zdim 10 --weights_file trained-WAE-final-200000 --model WAE --res_dir res_750_2021_03_25_10_50 --samples_near_modes
