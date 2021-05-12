@@ -74,15 +74,21 @@ class DataHandler(object):
         self.data_shape = [2,]
         # Create tf.dataset
         dataset_train = tf.data.Dataset.from_generator(_data_generator,
-                                output_signature=(
-                                    tf.TensorSpec(shape=(2,), dtype=tf.float32),
-                                    tf.TensorSpec(shape=(), dtype=tf.int32)),
+                                output_types=(tf.float32, tf.int32),
+                                output_shapes=([2,], []),
                                 args=(self.train_size, self.dataset))
+                                # output_signature=(
+                                #     tf.TensorSpec(shape=(2,), dtype=tf.float32),
+                                #     tf.TensorSpec(shape=(), dtype=tf.int32)),
+                                # args=(self.train_size, self.dataset))
         dataset_test = tf.data.Dataset.from_generator(_data_generator,
-                                output_signature=(
-                                    tf.TensorSpec(shape=(2,), dtype=tf.float32),
-                                    tf.TensorSpec(shape=(), dtype=tf.int32)),
+                                output_types=(tf.float32, tf.int32),
+                                output_shapes=([2,], []),
                                 args=(self.test_size, self.dataset))
+                                # output_signature=(
+                                #     tf.TensorSpec(shape=(2,), dtype=tf.float32),
+                                #     tf.TensorSpec(shape=(), dtype=tf.int32)),
+                                # args=(self.test_size, self.dataset))
         # repeat for multiple epochs
         dataset_train = dataset_train.repeat()
         dataset_test = dataset_test.repeat()
