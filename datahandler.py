@@ -23,7 +23,7 @@ def _data_generator(dataset_size, dataset):
             x = _nominal_generator(dataset)
         else:
             # generate anomalous
-            high = 1e2
+            high = 10
             r = np.random.uniform(low=-high, high=high, size=None)
             theta = np.random.uniform(low=0.0, high=pi, size=None)
             x = np.array((r*cos(theta), r*sin(theta)))

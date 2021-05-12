@@ -25,8 +25,8 @@ class Model(object):
         """
         with tf.variable_scope('score', reuse=reuse):
             # affine transform
-            A = tf.linalg.matmul(self.D, self.V)
-            A = tf.linalg.matmul(tf.transpose(self.V), A)
+            A = tf.linalg.matmul(self.D, tf.transpose(self.V))
+            A = tf.linalg.matmul(self.V, A)
             # score fct
             score = tf.linalg.matmul(tf.expand_dims(A, 0), tf.expand_dims(inputs, -1))
             score = ops.non_linear(score, self.opts['score_non_linear'],

@@ -46,7 +46,8 @@ class Run(object):
                                     reuse=False)
         # obj
         self.score = tf.reduce_mean(score)
-        self.objective = tf.math.abs(score) - tf.cast(y, dtype=tf.float32) * (self.lmbda*self.d_reg + self.beta*self.w_reg)
+        # self.objective = tf.math.abs(score) - tf.cast(y, dtype=tf.float32) * (self.lmbda*self.d_reg + self.beta*self.w_reg)
+        self.objective = tf.math.abs(score) - self.lmbda*self.d_reg + self.beta*self.w_reg
         self.objective = tf.reduce_mean(self.objective)
 
         # - Optimizers, savers, etc
@@ -220,8 +221,8 @@ class Run(object):
                 logging.error(debug_str)
 
                 # score fct heatmap
-                xs = np.linspace(-1, 1, 500, endpoint=True)
-                ys = np.linspace(-1, 1, 500, endpoint=True)
+                xs = np.linspace(-10, 10, 500, endpoint=True)
+                ys = np.linspace(-10, 10, 500, endpoint=True)
                 xv, yv = np.meshgrid(xs,ys)
                 grid = np.stack((xv,yv),axis=-1)
                 grid = grid.reshape([-1,2])

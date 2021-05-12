@@ -25,11 +25,11 @@ config['lr_decay'] = False
 config['lr_adv'] = 1e-08
 
 # - Obj set up
-config['score_non_linear'] = 'cubic' #linear, cubic, sinh
-if config['score_non_linear']=='linear':
-    config['clip_score'] = True
-else:
-    config['clip_score'] = True
+config['score_non_linear'] = 'linear' #linear, cubic, sinh
+# if config['score_non_linear']=='linear':
+#     config['clip_score'] = True
+# else:
+config['clip_score'] = True
 config['clip_score_value'] = 100.
 # dilatation reg
 config['lmbda'] = 1.

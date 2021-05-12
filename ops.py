@@ -78,7 +78,7 @@ def init_rotation(opts, scope):
     with tf.variable_scope(scope):
         phi = tf.get_variable( 'phi', [], tf.float32,
             tf.random_uniform_initializer(minval=0.,maxval=pi))
-    rot = tf.stack([tf.math.cos(phi), tf.math.sin(phi), -tf.math.sin(phi), tf.math.cos(phi)], 0)
+    rot = tf.stack([tf.math.cos(phi), -tf.math.sin(phi), tf.math.sin(phi), tf.math.cos(phi)], 0)
     return tf.reshape(rot, [2,2])
 
 def custom_uniform(stdev, size):
