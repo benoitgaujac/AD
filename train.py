@@ -36,7 +36,7 @@ class Run(object):
         else:
             raise ValueError('Unknown {} model' % self.opts['model'])
 
-        # - get data/label
+        # - Data/label
         x, y = self.data.next_element
         y = tf.reshape(y, [-1,1])
 
@@ -46,10 +46,10 @@ class Run(object):
                                     reuse=False)
         # obj
         self.score = tf.reduce_mean(score)
-        # self.objective = tf.math.abs(score) - tf.cast(y, dtype=tf.float32) * (self.lmbda*self.d_reg + self.beta*self.w_reg)
-        # self.objective = tf.math.abs(score) - self.lmbda*self.d_reg + self.beta*self.w_reg
-        self.objective = score - tf.cast(y, dtype=tf.float32) * (self.lmbda*self.d_reg + self.beta*self.w_reg)
-        # self.objective = score - self.lmbda*self.d_reg + self.beta*self.w_reg
+        # self.objective = tf.math.abs(score) - tf.cast(y, dtype=tf.float32) * (self.lmbda*self.d_reg + self.gamma*self.w_reg)
+        # self.objective = score - tf.cast(y, dtype=tf.float32) * (self.lmbda*self.d_reg + self.gamma*self.w_reg)
+        # self.objective = tf.math.abs(score) - self.lmbda*self.d_reg + self.gamma*self.w_reg
+        self.objective = score - self.lmbda*self.d_reg + self.gamma*self.w_reg
         self.objective = tf.reduce_mean(self.objective)
 
         # - Optimizers, savers, etc
@@ -60,7 +60,12 @@ class Run(object):
                                     inputs=self.inputs,
                                     reuse=True)
         self.score_anomalies = tf.reduce_mean(score_anomalies)
-        self.heatmap_score_anomalies = tf.math.abs(score_anomalies)
+        # self.heatmap_score_anomalies = tf.math.abs(score_anomalies)
+        self.heatmap_score_anomalies = score_anomalies
+
+        # - Params values
+        self.phi = self.model.phi
+        self.d = self.model.d
 
         # - Init iterators, sess, saver and load trained weights if needed, else init variables
         self.sess = tf.Session()
@@ -73,7 +78,7 @@ class Run(object):
     def add_ph(self):
         self.lr_decay = tf.placeholder(tf.float32, [], name='rate_decay_ph')
         self.inputs = tf.placeholder(tf.float32, [None,2], name='points')
-        self.beta = tf.placeholder(tf.float32, [], name='beta_ph')
+        self.gamma = tf.placeholder(tf.float32, [], name='gamma_ph')
         self.lmbda = tf.placeholder(tf.float32, [], name='lmbda_ph')
 
 
@@ -112,8 +117,9 @@ class Run(object):
         # - Init all monitoring variables
         Losses, Losses_test = [], []
         Scores_anomalies = []
+        Phi, D = [], []
 
-        # - Init decay lr and beta
+        # - Init decay lr and gamma
         decay = 1.
         decay_rate = 0.9
         fix_decay_steps = 25000
@@ -148,14 +154,14 @@ class Run(object):
             _ = self.sess.run(self.opt, feed_dict={
                                     self.data.handle: self.train_handle,
                                     self.lr_decay: decay,
-                                    self.beta: self.opts['beta'],
+                                    self.gamma: self.opts['gamma'],
                                     self.lmbda: self.opts['lmbda']})
 
             ##### TESTING LOOP #####
             if it % self.opts['evaluate_every'] == 0:
                 # training loss
                 feed_dict={self.data.handle: self.train_handle,
-                                    self.beta: self.opts['beta'],
+                                    self.gamma: self.opts['gamma'],
                                     self.lmbda: self.opts['lmbda']}
                 losses = self.sess.run([self.objective,
                                     self.score,
@@ -163,12 +169,16 @@ class Run(object):
                                     self.w_reg],
                                     feed_dict=feed_dict)
                 Losses.append(losses)
+                # model params
+                phi, d = self.sess.run([self.phi, self.d], feed_dict={})
+                Phi.append(phi)
+                D.append(d)
                 # testing loss
                 losses, scores_anomalies = np.zeros(4), np.zeros(2)
                 for it_ in range(test_it_num):
                     # testing losses
                     feed_dict={self.data.handle: self.test_handle,
-                                    self.beta: self.opts['beta'],
+                                    self.gamma: self.opts['gamma'],
                                     self.lmbda: self.opts['lmbda']}
                     loss = self.sess.run([self.objective,
                                     self.score,
@@ -182,7 +192,7 @@ class Run(object):
                                     self.opts['dataset'],
                                     True)
                     feed_dict={self.inputs: batch_inputs,
-                                    self.beta: self.opts['beta'],
+                                    self.gamma: self.opts['gamma'],
                                     self.lmbda: self.opts['lmbda']}
                     score_nominal = self.sess.run(self.score_anomalies,
                                     feed_dict=feed_dict)
@@ -192,7 +202,7 @@ class Run(object):
                                     self.opts['dataset'],
                                     False)
                     feed_dict={self.inputs: batch_inputs,
-                                    self.beta: self.opts['beta'],
+                                    self.gamma: self.opts['gamma'],
                                     self.lmbda: self.opts['lmbda']}
                     score_anomalous = self.sess.run(self.score_anomalies,
                                     feed_dict=feed_dict)
@@ -210,18 +220,19 @@ class Run(object):
                 debug_str = 'teScore=%.3f, teDilate=%.3f, teW=%.3f' % (
                                     Losses_test[-1][1],
                                     self.opts['lmbda']*Losses_test[-1][2],
-                                    self.opts['beta']*Losses_test[-1][3])
+                                    self.opts['gamma']*Losses_test[-1][3])
                 logging.error(debug_str)
                 debug_str = 'trScore=%.3f, trDilate=%.3f, trW=%.3f' % (
                                     Losses[-1][1],
                                     self.opts['lmbda']*Losses[-1][2],
-                                    self.opts['beta']*Losses[-1][3])
+                                    self.opts['gamma']*Losses[-1][3])
                 logging.error(debug_str)
                 debug_str = 'NoScore=%.3f, AnScore=%.3f' % (
                                     Scores_anomalies[-1][0],
                                     Scores_anomalies[-1][1])
                 logging.error(debug_str)
 
+            if it % self.opts['plot_every'] == 0:
                 # score fct heatmap
                 xs = np.linspace(-10, 10, 200, endpoint=True)
                 ys = np.linspace(-10, 10, 200, endpoint=True)
@@ -229,7 +240,7 @@ class Run(object):
                 grid = np.stack((xv,yv),axis=-1)
                 grid = grid.reshape([-1,2])
                 feed_dict={self.inputs: grid,
-                                    self.beta: self.opts['beta'],
+                                    self.gamma: self.opts['gamma'],
                                     self.lmbda: self.opts['lmbda']}
                 heatmap = self.sess.run(self.heatmap_score_anomalies,
                                     feed_dict=feed_dict)
@@ -237,8 +248,8 @@ class Run(object):
 
                 # plot
                 plot_train(self.opts, Losses, Losses_test,
-                                    Scores_anomalies,
-                                    heatmap, exp_dir,
+                                    Scores_anomalies, heatmap,
+                                    Phi, D, exp_dir,
                                     'res_it%07d.png' % (it))
 
             # - Update learning rate if necessary and it
@@ -258,7 +269,7 @@ class Run(object):
         # - Finale losses & scores
         # training loss
         feed_dict={self.data.handle: self.train_handle,
-                                    self.beta: self.opts['beta'],
+                                    self.gamma: self.opts['gamma'],
                                     self.lmbda: self.opts['lmbda']}
         losses = self.sess.run([self.objective,
                                     self.score,
@@ -271,7 +282,7 @@ class Run(object):
         for it_ in range(test_it_num):
             # testing losses
             feed_dict={self.data.handle: self.test_handle,
-                                    self.beta: self.opts['beta'],
+                                    self.gamma: self.opts['gamma'],
                                     self.lmbda: self.opts['lmbda']}
             loss = self.sess.run([self.objective,
                                     self.score,
@@ -285,7 +296,7 @@ class Run(object):
                                     self.opts['dataset'],
                                     True)
             feed_dict={self.inputs: batch_inputs,
-                                    self.beta: self.opts['beta'],
+                                    self.gamma: self.opts['gamma'],
                                     self.lmbda: self.opts['lmbda']}
             score_nominal = self.sess.run(self.score_anomalies,
                                     feed_dict=feed_dict)
@@ -295,7 +306,7 @@ class Run(object):
                                     self.opts['dataset'],
                                     False)
             feed_dict={self.inputs: batch_inputs,
-                                    self.beta: self.opts['beta'],
+                                    self.gamma: self.opts['gamma'],
                                     self.lmbda: self.opts['lmbda']}
             score_anomalous = self.sess.run(self.score_anomalies,
                                     feed_dict=feed_dict)
@@ -313,12 +324,12 @@ class Run(object):
         debug_str = 'teScore=%.3f, teDilate=%.3f, teW=%.3f' % (
                                     Losses_test[-1][1],
                                     self.opts['lmbda']*Losses_test[-1][2],
-                                    self.opts['beta']*Losses_test[-1][3])
+                                    self.opts['gamma']*Losses_test[-1][3])
         logging.error(debug_str)
         debug_str = 'trScore=%.3f, trDilate=%.3f, trW=%.3f' % (
                                     Losses[-1][1],
                                     self.opts['lmbda']*Losses[-1][2],
-                                    self.opts['beta']*Losses[-1][3])
+                                    self.opts['gamma']*Losses[-1][3])
         logging.error(debug_str)
         debug_str = 'NoScore=%.3f, AnScore=%.3f' % (
                                     Scores_anomalies[-1][0],
@@ -445,7 +456,7 @@ class Run(object):
 #                 logging.error(debug_str)
 #
 #             if opts['model'] == 'BetaVAE':
-#                 debug_str = 'LOSS=%.3f, REC=%.3f, MSE=%.3f, beta*KL=%10.3e \n '  % (
+#                 debug_str = 'LOSS=%.3f, REC=%.3f, MSE=%.3f, gamma*KL=%10.3e \n '  % (
 #                                             Loss,
 #                                             Loss_rec,
 #                                             MSE,

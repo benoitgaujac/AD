@@ -1,6 +1,7 @@
 import os
 
 import numpy as np
+from math import pi
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -11,14 +12,16 @@ import utils
 import pdb
 
 
-def plot_train(opts, trloss, teloss, scores, heatmap, exp_dir, filename):
+def plot_train(opts, trloss, teloss, scores, heatmap, Phi, D, exp_dir, filename):
 
     """ Generates and saves the plot of the following layout:
         img1 | img2 | img3
 
         img1    -   obj/training curves
-        img2    -   nominal/anomalus scores
-        img3    -   heatmap of score fct
+        img2    -   heatmap of score fct
+        img3    -   Phi
+        img4    -   nominal/anomalus scores
+        img5    -   Diag values
 
     """
 
@@ -28,8 +31,8 @@ def plot_train(opts, trloss, teloss, scores, heatmap, exp_dir, filename):
     height_pic = 1000
     width_pic = 1000
     fig_width = height_pic / float(dpi)
-    fig_height = 3 * width_pic / float(dpi)
-    fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(fig_height, fig_width))
+    fig_height = 5 * width_pic / float(dpi)
+    fig, axes = plt.subplots(nrows=1, ncols=5, figsize=(fig_height, fig_width))
 
     ### The loss curves
     # test
@@ -38,13 +41,13 @@ def plot_train(opts, trloss, teloss, scores, heatmap, exp_dir, filename):
     # scr = np.abs(array_loss[:,1])
     scr = array_loss[:,1]
     dreg = opts['lmbda']*array_loss[:,2]
-    wreg = opts['beta']*array_loss[:,3]
+    wreg = opts['gamma']*array_loss[:,3]
     for y, (color, label) in zip([obj, scr, dreg, wreg],
                                 [('black', 'teObj'),
                                 # ('red', '|teScore|'),
                                 ('red', 'teScore'),
                                 ('yellow', r'$\lambda$teDreg'),
-                                ('cyan', r'$\beta$teWreg')]):
+                                ('cyan', r'$\gamma$teWreg')]):
         total_num = len(y)
         # x_step = max(int(total_num / 200), 1)
         # x = np.arange(1, len(y) + 1, x_step)
@@ -58,13 +61,13 @@ def plot_train(opts, trloss, teloss, scores, heatmap, exp_dir, filename):
     # scr = np.abs(array_loss[:,1])
     scr = array_loss[:,1]
     dreg = opts['lmbda']*array_loss[:,2]
-    wreg = opts['beta']*array_loss[:,3]
+    wreg = opts['gamma']*array_loss[:,3]
     for y, (color, label) in zip([obj, scr, dreg, wreg],
                                 [('black', 'trObj'),
                                 # ('red', '|trScore|'),
                                 ('red', 'trScore'),
                                 ('yellow', r'$\lambda$trDreg'),
-                                ('cyan', r'$\beta$trWreg')]):
+                                ('cyan', r'$\gamma$trWreg')]):
         total_num = len(y)
         # x_step = max(int(total_num / 200), 1)
         # x = np.arange(1, len(y) + 1, x_step)
@@ -84,6 +87,22 @@ def plot_train(opts, trloss, teloss, scores, heatmap, exp_dir, filename):
     axes[0].legend(loc='best', ncol=2)
     axes[0].set_title('Log Losses')
 
+    ### The score heatmap
+    axes[1].imshow(heatmap, cmap='hot_r', interpolation='nearest')
+    axes[1].set_title('Score heatmap')
+    fig.colorbar(axes[1].imshow(heatmap, cmap='hot_r', interpolation='nearest'), ax=axes[1], shrink=0.75, fraction=0.08) #, format=format[dataset])
+
+    ### Phi
+    total_num = len(Phi)
+    x = np.arange(1, total_num + 1)
+    axes[2].plot(x, Phi, linewidth=2, color='black', label=r'$\Phi$')
+    axes[2].grid(axis='y')
+    axes[2].set_yticks(np.linspace(0.,pi,6))
+    axes[2].set_yticklabels(['0', r'$\frac{\pi}{6}$', r'$\frac{\pi}{3}$', r'$\frac{2\pi}{3}$',
+                            r'$\frac{5\pi}{6}$', r'$\pi$'])
+    axes[2].legend(loc='best')
+    axes[2].set_title(r'$\Phi$')
+
     ### The anomalous losses
     array_loss = np.abs(np.array(scores).reshape((-1,2)))
     for y, (color, label) in zip([np.abs(array_loss[:,0]),
@@ -95,14 +114,17 @@ def plot_train(opts, trloss, teloss, scores, heatmap, exp_dir, filename):
         # x = np.arange(1, len(y) + 1, x_step)
         # y = np.log(y)
         x = np.arange(1, total_num + 1)
-        axes[1].plot(x, y, linewidth=1, color=color, label=label)
-    axes[1].legend(loc='upper right')
-    axes[1].set_title('Log Scores')
+        axes[3].plot(x, y, linewidth=1, color=color, label=label)
+    axes[3].legend(loc='upper right')
+    axes[3].set_title('Log Scores')
 
-    ### The score heatmap
-    axes[2].imshow(heatmap, cmap='hot_r', interpolation='nearest')
-    axes[2].set_title('Score heatmap')
-    fig.colorbar(axes[2].imshow(heatmap, cmap='hot_r', interpolation='nearest'), ax=axes[2], shrink=0.75, fraction=0.08) #, format=format[dataset])
+    ### D
+    array_D = np.array(D).reshape((-1,2))
+    axes[4].plot(x, array_D[:,0], linewidth=2, color='red', label=r'$\alpha$')
+    axes[4].plot(x, array_D[:,1], linewidth=2, color='blue', label=r'$\beta$')
+    axes[4].grid(axis='y')
+    axes[4].legend(loc='best')
+    axes[4].set_title('Model params')
 
     ### Saving plots
     # Plot

@@ -13,8 +13,12 @@ class Model(object):
         self.opts = opts
         # define different weights of the last layer
         self.W = ops.init_w(self.opts, 'score')
-        self.D = ops.init_diagonal(self.opts, 'score')
-        self.V = ops.init_rotation(self.opts, 'score')
+        self.d = ops.init_diagonal(self.opts, 'score')
+        self.D = tf.diag(self.d)
+        self.phi = ops.init_rotation(self.opts, 'score')
+        rot = tf.stack([tf.math.cos(self.phi), -tf.math.sin(self.phi),
+                        tf.math.sin(self.phi), tf.math.cos(self.phi)], 0)
+        self.V = tf.reshape(rot, [2,2])
 
     def score(self, inputs, reuse=False):
         """

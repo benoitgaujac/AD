@@ -72,14 +72,13 @@ def init_diagonal(opts, scope):
                 tf.random_uniform_initializer(minval=-1.,maxval=1))
         else:
             raise Exception('Invalid %s mlp initialization!' % opts['mlp_init'])
-        return tf.diag(D)
+        return D
 
 def init_rotation(opts, scope):
     with tf.variable_scope(scope):
         phi = tf.get_variable( 'phi', [], tf.float32,
             tf.random_uniform_initializer(minval=0.,maxval=pi))
-    rot = tf.stack([tf.math.cos(phi), -tf.math.sin(phi), tf.math.sin(phi), tf.math.cos(phi)], 0)
-    return tf.reshape(rot, [2,2])
+    return tf.clip_by_value(phi, 0., pi)
 
 def custom_uniform(stdev, size):
     return np.random.uniform(low=-stdev * np.sqrt(3),

@@ -39,9 +39,9 @@ config['clip_d_reg_value'] = 100.
 # linear proj reg
 config['learned_proj'] = True #learning final linear proj
 if config['learned_proj']:
-    config['beta'] = 1.
+    config['gamma'] = 1.
 else:
-    config['beta'] = 0.
+    config['gamma'] = 0.
 config['w_reg'] = 'l2sq' # l1, l2, l2sq
 config['clip_w_reg'] = True
 config['clip_w_reg_value'] = 100.

@@ -36,7 +36,7 @@ def _nominal_generator(dataset):
         dataset = dataset.decode('UTF-8')
     if dataset=='line':
         r = np.random.uniform(low=-1, high=1, size=None)
-        theta = pi / 6
+        theta = float(pi / 6.)
         x = np.array((r*cos(theta), r*sin(theta)))
     elif dataset==b'quadratic':
         z = np.random.uniform(low=-1, high=1, size=None)

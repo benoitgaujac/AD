@@ -16,14 +16,14 @@ source /share/apps/examples/source_files/python/python-3.6.4.source
 source /share/apps/examples/source_files/cuda/cuda-10.0.source
 
 # test local
-# python3 run.py --save_model --save_data --num_it 30000 --learn_w --lmbda 1 --out_dir line_linear --scr_nonlin linear
+# python3 run.py --save_model --save_data --num_it 50000 --lr 0.01 --learn_w --lmbda 10 --out_dir line_linear --scr_nonlin linear
 # python3 run.py --save_model --save_data --num_it 30000 --learn_w --lmbda 1 --out_dir line_cubic --scr_nonlin cubic
 # python3 run.py --save_model --save_data --num_it 30000 --learn_w --lmbda 1 --out_dir line_sinh --scr_nonlin sinh
 
 # array
-python3 run_array.py --save_model --save_data --num_it 30000 --learn_w --out_dir line_linear --scr_nonlin linear --exp_id $SGE_TASK_ID
-# python3 run_array.py --save_model --save_data --num_it 30000 --learn_w --out_dir line_cubic --scr_nonlin cubic --exp_id $SGE_TASK_ID
-# python3 run_array.py --save_model --save_data --num_it 30000 --learn_w --out_dir line_sinh --scr_nonlin sinh --exp_id $SGE_TASK_ID
+python3 run_array.py --save_model --save_data --num_it 50000 --learn_w --out_dir line_linear_no_abs_no_labels --scr_nonlin linear --exp_id $SGE_TASK_ID
+# python3 run_array.py --save_model --save_data --num_it 50000 --learn_w --out_dir line_cubic --scr_nonlin cubic --exp_id $SGE_TASK_ID
+# python3 run_array.py --save_model --save_data --num_it 50000 --learn_w --out_dir line_sinh --scr_nonlin sinh --exp_id $SGE_TASK_ID
 
 # testing
 # python3 run_test.py --data_dir ../data --dataset mnist --out_dir mnist_zdim2_econv_dconv --full_cov_mat --net_archi conv_per_mix_econv_dconv --mode plot --zdim 2 --weights_file trained-VAE-final-200000 --model VAE --res_dir res_1_2021_03_31_10_03
