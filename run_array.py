@@ -38,10 +38,12 @@ parser.add_argument("--model", default='affine',
                     help='score model to train [affine/nonaffine]')
 parser.add_argument("--scr_nonlin", default='linear',
                     help='non linear activation for score fct')
-parser.add_argument("--learn_w", action='store_false', default=True,
+parser.add_argument("--train_w", action='store_false', default=True,
                     help='whether to learn linear proj')
 parser.add_argument("--beta", type=float, default=0.,
                     help='weight regulation')
+parser.add_argument("--train_d", action='store_false', default=True,
+                    help='whether to learn D')
 parser.add_argument("--lmbda", type=float, default=0.,
                     help='dilatation reg')
 # saving opt
@@ -69,14 +71,18 @@ def main():
     # Model set up
     opts['model'] = FLAGS.model
     opts['score_non_linear'] = FLAGS.scr_nonlin
-    opts['learned_proj'] = FLAGS.learn_w
-    if opts['learned_proj']:
+    opts['train_w'] = FLAGS.train_w
+    if opts['train_w']:
         opts['beta'] = FLAGS.beta
     else:
         opts['beta'] = 0.
-    lambdas = [0.1, 1., 10., 100.]
-    exp_id = (FLAGS.exp_id-1) % len(lambdas)
-    opts['lmbda'] = lambdas[exp_id]
+    opts['train_d'] = FLAGS.train_d
+    if opts['train_d']:
+        lambdas = [0.1, 1., 10., 100.]
+        exp_id = (FLAGS.exp_id-1) % len(lambdas)
+        opts['lmbda'] = lambdas[exp_id]
+    else:
+        opts['lmbda'] = 0.
 
     # Create directories
     if FLAGS.res_dir:

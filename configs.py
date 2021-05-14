@@ -32,13 +32,17 @@ config['score_non_linear'] = 'linear' #linear, cubic, sinh
 config['clip_score'] = True
 config['clip_score_value'] = 100.
 # dilatation reg
-config['lmbda'] = 1.
+config['train_d'] = True #learning D
+if config['train_d']:
+    config['lmbda'] = 1.
+else:
+    config['lmbda'] = 0.
 config['d_reg'] = 'frob' # trace, frob, det
 config['clip_d_reg'] = True
 config['clip_d_reg_value'] = 100.
 # linear proj reg
-config['learned_proj'] = True #learning final linear proj
-if config['learned_proj']:
+config['train_w'] = True #learning final w
+if config['train_w']:
     config['gamma'] = 1.
 else:
     config['gamma'] = 0.

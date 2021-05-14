@@ -12,10 +12,10 @@ class Model(object):
     def __init__(self, opts):
         self.opts = opts
         # define different weights of the last layer
-        self.W = ops.init_w(self.opts, 'score')
-        self.d = ops.init_diagonal(self.opts, 'score')
+        self.W = ops.init_w(self.opts, 'score/W')
+        self.d = ops.init_diagonal(self.opts, 'score/D')
         self.D = tf.diag(self.d)
-        self.phi = ops.init_rotation(self.opts, 'score')
+        self.phi = ops.init_rotation(self.opts, 'score/phi')
         rot = tf.stack([tf.math.cos(self.phi), -tf.math.sin(self.phi),
                         tf.math.sin(self.phi), tf.math.cos(self.phi)], 0)
         self.V = tf.reshape(rot, [2,2])
@@ -38,7 +38,7 @@ class Model(object):
             if self.opts['clip_score']:
                 score = tf.clip_by_value(score, -self.opts['clip_score_value'],
                                     self.opts['clip_score_value'])
-            if self.opts['learned_proj']:
+            if self.opts['train_w']:
                 score = tf.linalg.matmul(tf.expand_dims(self.W, 0), score)
             else:
                 score = tf.reduce_sum(score, axis=1)

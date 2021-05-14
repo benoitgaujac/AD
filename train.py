@@ -49,7 +49,8 @@ class Run(object):
         # self.objective = tf.math.abs(score) - tf.cast(y, dtype=tf.float32) * (self.lmbda*self.d_reg + self.gamma*self.w_reg)
         # self.objective = score - tf.cast(y, dtype=tf.float32) * (self.lmbda*self.d_reg + self.gamma*self.w_reg)
         # self.objective = tf.math.abs(score) - self.lmbda*self.d_reg + self.gamma*self.w_reg
-        self.objective = score - self.lmbda*self.d_reg + self.gamma*self.w_reg
+        # self.objective = score - self.lmbda*self.d_reg + self.gamma*self.w_reg
+        self.objective = tf.cast(y, dtype=tf.float32) * score
         self.objective = tf.reduce_mean(self.objective)
 
         # - Optimizers, savers, etc
@@ -98,7 +99,15 @@ class Run(object):
     def add_optimizers(self):
         lr = self.opts['lr']
         opt = self.optimizer(lr, self.lr_decay)
-        vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES)
+        vars = []
+        if self.opts['train_w']:
+            vars += tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES,
+                                        scope='score/W')
+        if self.opts['train_d']:
+            vars += tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES,
+                                        scope='score/D')
+        vars += tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES,
+                                    scope='score/phi')
         self.opt = opt.minimize(loss=self.objective, var_list=vars)
 
 
