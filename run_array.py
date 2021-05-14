@@ -78,7 +78,7 @@ def main():
         opts['beta'] = 0.
     opts['train_d'] = FLAGS.train_d
     if opts['train_d']:
-        lambdas = [0., 0.1, 1.]
+        lambdas = [0., 0.1, 1., 10.]
         exp_id = (FLAGS.exp_id-1) % len(lambdas)
         opts['lmbda'] = lambdas[exp_id]
     else:
