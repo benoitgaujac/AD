@@ -1,5 +1,5 @@
 import copy
-from math import pow, sqrt
+from math import pow, sqrt, pi
 
 ### Default common config
 config = {}
@@ -13,6 +13,7 @@ config['out_dir'] = 'code_outputs'
 
 # - Experiment set up
 config['train_dataset_size'] = -1
+config['theta'] = float(pi/6.)
 config['model'] = 'affine' # affine, nonaffine
 config['use_trained'] = False # train from pre-trained model
 
@@ -29,7 +30,7 @@ config['score_non_linear'] = 'linear' #linear, cubic, sinh
 # if config['score_non_linear']=='linear':
 #     config['clip_score'] = True
 # else:
-config['clip_score'] = True
+config['clip_score'] = False
 config['clip_score_value'] = 100.
 # dilatation reg
 config['train_d'] = True #learning D

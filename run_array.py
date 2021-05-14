@@ -78,7 +78,7 @@ def main():
         opts['beta'] = 0.
     opts['train_d'] = FLAGS.train_d
     if opts['train_d']:
-        lambdas = [0.1, 1., 10., 100.]
+        lambdas = [0., 0.1, 1.]
         exp_id = (FLAGS.exp_id-1) % len(lambdas)
         opts['lmbda'] = lambdas[exp_id]
     else:
@@ -118,7 +118,7 @@ def main():
     opts['it_num'] = FLAGS.num_it
     opts['batch_size'] = FLAGS.batch_size
     opts['lr'] = FLAGS.lr
-    opts['plot_every'] = 5000 #int(opts['print_every'] / 2.) + 1
+    opts['plot_every'] = 10000 #int(opts['print_every'] / 2.) + 1
     opts['evaluate_every'] = int(opts['plot_every'] / 5.) #int(opts['print_every'] / 2.) + 1
     opts['save_every'] = 10000000000
     opts['save_final'] = FLAGS.save_model

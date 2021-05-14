@@ -43,14 +43,15 @@ class Run(object):
         # - Define Objectives
         score, self.d_reg, self.w_reg = self.model.losses(
                                     inputs=x,
-                                    reuse=False)
+                                    reuse=True)
         # obj
         self.score = tf.reduce_mean(score)
         # self.objective = tf.math.abs(score) - tf.cast(y, dtype=tf.float32) * (self.lmbda*self.d_reg + self.gamma*self.w_reg)
         # self.objective = score - tf.cast(y, dtype=tf.float32) * (self.lmbda*self.d_reg + self.gamma*self.w_reg)
         # self.objective = tf.math.abs(score) - self.lmbda*self.d_reg + self.gamma*self.w_reg
         # self.objective = score - self.lmbda*self.d_reg + self.gamma*self.w_reg
-        self.objective = tf.cast(y, dtype=tf.float32) * score
+        self.objective = tf.cast(y, dtype=tf.float32) * tf.math.abs(score) \
+                            + (1. - tf.cast(y, dtype=tf.float32)) * score
         self.objective = tf.reduce_mean(self.objective)
 
         # - Optimizers, savers, etc

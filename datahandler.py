@@ -7,6 +7,8 @@ import tensorflow.compat.v1 as tf
 import numpy as np
 from math import pi, cos, sin
 
+import configs
+
 import pdb
 
 
@@ -19,7 +21,7 @@ def _data_generator(dataset_size, dataset):
     while n<dataset_size:
         y = np.random.randint(low=0, high=2, size=None, dtype='int32')
         # generate nominal
-        if y==0:
+        if y==1:
             x = _nominal_generator(dataset)
         else:
             # generate anomalous
@@ -36,7 +38,7 @@ def _nominal_generator(dataset):
         dataset = dataset.decode('UTF-8')
     if dataset=='line':
         r = np.random.uniform(low=-1, high=1, size=None)
-        theta = float(pi / 6.)
+        theta = configs.config_line['theta'] #float(pi / 6.)
         x = np.array((r*cos(theta), r*sin(theta)))
     elif dataset==b'quadratic':
         z = np.random.uniform(low=-1, high=1, size=None)

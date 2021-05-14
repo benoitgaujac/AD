@@ -8,7 +8,7 @@
 #$ -l tmem=1G
 #$ -l h_rt=1:00:00
 
-#$ -t 1-4
+#$ -t 1-2
 
 #$ -N linline
 
@@ -21,7 +21,7 @@ source /share/apps/examples/source_files/cuda/cuda-10.0.source
 # python3 run.py --save_model --save_data --num_it 30000 --train_w --lmbda 1 --out_dir line_sinh --scr_nonlin sinh
 
 # array
-python3 run_array.py --save_model --save_data --num_it 50000 --train_w --train_d --out_dir line_linear_nominal_phi --scr_nonlin linear --exp_id $SGE_TASK_ID
+python3 run_array.py --save_model --save_data --num_it 50000 --train_w --out_dir line_linear_no_w --scr_nonlin linear --exp_id $SGE_TASK_ID
 # python3 run_array.py --save_model --save_data --num_it 50000 --train_w --out_dir line_cubic --scr_nonlin cubic --exp_id $SGE_TASK_ID
 # python3 run_array.py --save_model --save_data --num_it 50000 --train_w --out_dir line_sinh --scr_nonlin sinh --exp_id $SGE_TASK_ID
 

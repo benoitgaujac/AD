@@ -35,13 +35,13 @@ class Model(object):
             score = tf.linalg.matmul(tf.expand_dims(A, 0), tf.expand_dims(inputs, -1))
             score = ops.non_linear(score, self.opts['score_non_linear'],
                                     self.opts['clip_score_value'])
-            if self.opts['clip_score']:
-                score = tf.clip_by_value(score, -self.opts['clip_score_value'],
-                                    self.opts['clip_score_value'])
             if self.opts['train_w']:
                 score = tf.linalg.matmul(tf.expand_dims(self.W, 0), score)
             else:
                 score = tf.reduce_sum(score, axis=1)
+            if self.opts['clip_score']:
+                score = tf.clip_by_value(score, -self.opts['clip_score_value'],
+                                    self.opts['clip_score_value'])
 
         return tf.reshape(score, [-1,1])
 
