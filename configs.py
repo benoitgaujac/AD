@@ -39,7 +39,7 @@ if config['train_d']:
 else:
     config['lmbda'] = 0.
 config['d_reg'] = 'frob' # trace, frob, det
-config['clip_d_reg'] = True
+config['clip_d_reg'] = False
 config['clip_d_reg_value'] = 100.
 # linear proj reg
 config['train_w'] = True #learning final w

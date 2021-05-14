@@ -51,7 +51,8 @@ class Run(object):
         # self.objective = tf.math.abs(score) - self.lmbda*self.d_reg + self.gamma*self.w_reg
         # self.objective = score - self.lmbda*self.d_reg + self.gamma*self.w_reg
         self.objective = tf.cast(y, dtype=tf.float32) * tf.math.abs(score) \
-                            + (1. - tf.cast(y, dtype=tf.float32)) * score
+                            + (1. - tf.cast(y, dtype=tf.float32)) * score \
+                            - self.lmbda*self.d_reg + self.gamma*self.w_reg
         self.objective = tf.reduce_mean(self.objective)
 
         # - Optimizers, savers, etc
