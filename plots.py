@@ -97,8 +97,9 @@ def plot_train(opts, trloss, teloss, scores, heatmap, Phi, D, exp_dir, filename)
     x = np.arange(1, total_num + 1)
     axes[2].plot(x, Phi, linewidth=2, color='black', label=r'$\Phi$')
     axes[2].grid(axis='y')
-    axes[2].set_yticks(np.linspace(0.,pi,6))
-    axes[2].set_yticklabels(['0', r'$\frac{\pi}{6}$', r'$\frac{\pi}{3}$', r'$\frac{2\pi}{3}$',
+    axes[2].set_yticks(np.linspace(0.,pi,7))
+    axes[2].set_yticklabels(['0', r'$\frac{\pi}{6}$', r'$\frac{\pi}{3}$',
+                            r'$\frac{\pi}{2}$', r'$\frac{2\pi}{3}$',
                             r'$\frac{5\pi}{6}$', r'$\pi$'])
     axes[2].legend(loc='best')
     axes[2].set_title(r'$\Phi$')
