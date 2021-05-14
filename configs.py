@@ -30,7 +30,7 @@ config['score_non_linear'] = 'linear' #linear, cubic, sinh
 # if config['score_non_linear']=='linear':
 #     config['clip_score'] = True
 # else:
-config['clip_score'] = False
+config['clip_score'] = True
 config['clip_score_value'] = 100.
 # dilatation reg
 config['train_d'] = True #learning D
@@ -39,7 +39,7 @@ if config['train_d']:
 else:
     config['lmbda'] = 0.
 config['d_reg'] = 'frob' # trace, frob, det
-config['clip_d_reg'] = False
+config['clip_d_reg'] = True
 config['clip_d_reg_value'] = 100.
 # linear proj reg
 config['train_w'] = True #learning final w
