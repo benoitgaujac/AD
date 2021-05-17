@@ -121,7 +121,7 @@ def main():
     opts['batch_size'] = FLAGS.batch_size
     opts['lr'] = FLAGS.lr
     opts['plot_every'] = 25000 #int(opts['print_every'] / 2.) + 1
-    opts['evaluate_every'] = int(opts['plot_every'] / 5.) #int(opts['print_every'] / 2.) + 1
+    opts['evaluate_every'] = int(opts['plot_every'] / 10.) #int(opts['print_every'] / 2.) + 1
     opts['save_every'] = 10000000000
     opts['save_final'] = FLAGS.save_model
     opts['save_train_data'] = FLAGS.save_data

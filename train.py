@@ -132,7 +132,7 @@ class Run(object):
         # - Init all monitoring variables
         Losses, Losses_test = [], []
         Scores_anomalies = []
-        Phi, D = [], []
+        Psi, D = [], []
 
         # - Init decay lr and gamma
         decay = 1.
@@ -185,8 +185,8 @@ class Run(object):
                                     feed_dict=feed_dict)
                 Losses.append(losses)
                 # model params
-                phi, d = self.sess.run([self.phi, self.d], feed_dict={})
-                Phi.append(phi)
+                psi, d = self.sess.run([self.phi, self.d], feed_dict={})
+                Psi.append(psi)
                 D.append(d)
                 # testing loss
                 losses, scores_anomalies = np.zeros(4), np.zeros(2)
@@ -266,7 +266,7 @@ class Run(object):
                 # plot
                 plot_train(self.opts, Losses, Losses_test,
                                     Scores_anomalies, heatmap,
-                                    Phi, D, exp_dir,
+                                    Psi, D, exp_dir,
                                     'res_it%07d.png' % (it))
 
             # - Update learning rate if necessary and it
@@ -355,6 +355,7 @@ class Run(object):
                                     Scores_anomalies[-1][1])
         logging.error(debug_str)
 
+        pdb.set_trace()
         # -- save training data
         if self.opts['save_train_data']:
             data_dir = 'train_data'
@@ -362,9 +363,12 @@ class Run(object):
             utils.create_dir(save_path)
             name = 'res_train_final'
             np.savez(os.path.join(save_path, name),
-                                    loss=np.array(Losses),
-                                    loss_test = np.array(Losses_test),
-                                    loss_anomalies = np.array(Scores_anomalies))
+                    loss=np.array(Losses),
+                    loss_test = np.array(Losses_test),
+                    loss_anomalies = np.array(Scores_anomalies),
+                    theta = self.opts['theta'],
+                    psi=np.array(Psi),
+                    d = np.array(D))
 
 #     def test(self, MODEL_PATH=None, WEIGHTS_FILE=None):
 #         """
