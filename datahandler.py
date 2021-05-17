@@ -123,9 +123,11 @@ class DataHandler(object):
             for n in range(batch_size):
                 # x = _nominal_generator(dataset)
                 obs[n] = _nominal_generator(dataset)
+            labels = np.ones([batch_size,])
         else:
             high = 1e2
             r = np.random.uniform(low=-high, high=high, size=batch_size)
             theta = np.random.uniform(low=0.0, high=pi, size=batch_size)
             obs = np.stack((r*np.cos(theta), r*np.sin(theta)),axis=-1)
-        return obs
+            labels = np.zeros([batch_size,])
+        return obs, labels

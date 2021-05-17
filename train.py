@@ -61,12 +61,13 @@ class Run(object):
         self.add_optimizers()
 
         # - nominal/anomalous score
-        score_anomalies = self.model.score(
-                                    inputs=self.inputs,
+        score = self.model.score(
+                                    inputs=self.x,
                                     reuse=True)
+        score_anomalies = self.y*score + (1-self.y)*tf.abs(score)
         self.score_anomalies = tf.reduce_mean(score_anomalies)
-        # self.heatmap_score_anomalies = tf.math.abs(score_anomalies)
-        self.heatmap_score_anomalies = score_anomalies
+        # self.heatmap_score_anomalies = tf.math.abs(score)
+        self.heatmap_score_anomalies = score
 
         # - Params values
         self.phi = self.model.phi
@@ -82,7 +83,8 @@ class Run(object):
 
     def add_ph(self):
         self.lr_decay = tf.placeholder(tf.float32, [], name='rate_decay_ph')
-        self.inputs = tf.placeholder(tf.float32, [None,2], name='points')
+        self.x = tf.placeholder(tf.float32, [None,2], name='points')
+        self.y = tf.placeholder(tf.float32, [None,], name='labels')
         self.gamma = tf.placeholder(tf.float32, [], name='gamma_ph')
         self.lmbda = tf.placeholder(tf.float32, [], name='lmbda_ph')
 
@@ -204,7 +206,8 @@ class Run(object):
                                     self.opts['batch_size'],
                                     self.opts['dataset'],
                                     True)
-                    feed_dict={self.inputs: batch_inputs,
+                    feed_dict={self.x: batch_inputs[0],
+                                    self.y: batch_inputs[1],
                                     self.gamma: self.opts['gamma'],
                                     self.lmbda: self.opts['lmbda']}
                     score_nominal = self.sess.run(self.score_anomalies,
@@ -214,7 +217,8 @@ class Run(object):
                                     self.opts['batch_size'],
                                     self.opts['dataset'],
                                     False)
-                    feed_dict={self.inputs: batch_inputs,
+                    feed_dict={self.x: batch_inputs[0],
+                                    self.y: batch_inputs[1],
                                     self.gamma: self.opts['gamma'],
                                     self.lmbda: self.opts['lmbda']}
                     score_anomalous = self.sess.run(self.score_anomalies,
@@ -252,7 +256,7 @@ class Run(object):
                 xv, yv = np.meshgrid(xs,ys)
                 grid = np.stack((xv,yv),axis=-1)
                 grid = grid.reshape([-1,2])
-                feed_dict={self.inputs: grid,
+                feed_dict={self.x: grid,
                                     self.gamma: self.opts['gamma'],
                                     self.lmbda: self.opts['lmbda']}
                 heatmap = self.sess.run(self.heatmap_score_anomalies,
@@ -308,7 +312,8 @@ class Run(object):
                                     self.opts['batch_size'],
                                     self.opts['dataset'],
                                     True)
-            feed_dict={self.inputs: batch_inputs,
+            feed_dict={self.x: batch_inputs[0],
+                                    self.y: batch_inputs[1],
                                     self.gamma: self.opts['gamma'],
                                     self.lmbda: self.opts['lmbda']}
             score_nominal = self.sess.run(self.score_anomalies,
@@ -318,7 +323,8 @@ class Run(object):
                                     self.opts['batch_size'],
                                     self.opts['dataset'],
                                     False)
-            feed_dict={self.inputs: batch_inputs,
+            feed_dict={self.x: batch_inputs[0],
+                                    self.y: batch_inputs[1],
                                     self.gamma: self.opts['gamma'],
                                     self.lmbda: self.opts['lmbda']}
             score_anomalous = self.sess.run(self.score_anomalies,

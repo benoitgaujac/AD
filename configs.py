@@ -1,5 +1,6 @@
 import copy
 from math import pow, sqrt, pi
+import numpy as np
 
 ### Default common config
 config = {}
@@ -13,7 +14,10 @@ config['out_dir'] = 'code_outputs'
 
 # - Experiment set up
 config['train_dataset_size'] = -1
-config['theta'] = float(pi/6.)
+seed = 123
+np.random.seed(seed)
+config['theta'] = np.random.uniform(0,pi)
+np.random.seed()
 config['model'] = 'affine' # affine, nonaffine
 config['use_trained'] = False # train from pre-trained model
 

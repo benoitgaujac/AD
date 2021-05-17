@@ -97,7 +97,7 @@ def plot_train(opts, trloss, teloss, scores, heatmap, Phi, D, exp_dir, filename)
     x = np.arange(1, total_num + 1)
     axes[2].plot(x, Phi, linewidth=2, color='red', label=r'$\phi$')
     axes[2].plot(x, opts['theta']*np.ones(total_num), linewidth=2, linestyle='--',
-                            color='blue', label=r'$\theta_x$')    
+                            color='blue', label=r'$\theta_x$')
     axes[2].grid(axis='y')
     axes[2].set_yticks(np.linspace(0.,pi,7))
     axes[2].set_yticklabels(['0', r'$\frac{\pi}{6}$', r'$\frac{\pi}{3}$',
@@ -110,7 +110,7 @@ def plot_train(opts, trloss, teloss, scores, heatmap, Phi, D, exp_dir, filename)
     array_loss = np.abs(np.array(scores).reshape((-1,2)))
     for y, (color, label) in zip([np.abs(array_loss[:,0]),
                                 np.abs(array_loss[:,1])],
-                                [('red', '|nominal score|'),
+                                [('red', 'nominal score'),
                                 ('blue', '|anomalous score|')]):
         total_num = len(y)
         # x_step = max(int(total_num / 200), 1)

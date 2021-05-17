@@ -40,7 +40,7 @@ parser.add_argument("--scr_nonlin", default='linear',
                     help='non linear activation for score fct')
 parser.add_argument("--train_w", action='store_false', default=True,
                     help='whether to learn linear proj')
-parser.add_argument("--beta", type=float, default=0.,
+parser.add_argument("--gamma", type=float, default=0.,
                     help='weight regulation')
 parser.add_argument("--train_d", action='store_false', default=True,
                     help='whether to learn D')
@@ -73,12 +73,13 @@ def main():
     opts['score_non_linear'] = FLAGS.scr_nonlin
     opts['train_w'] = FLAGS.train_w
     if opts['train_w']:
-        opts['beta'] = FLAGS.beta
+        opts['gamma'] = FLAGS.gamma
     else:
-        opts['beta'] = 0.
+        opts['gamma'] = 0.
     opts['train_d'] = FLAGS.train_d
     if opts['train_d']:
-        lambdas = [0., 0.1, 1., 10.]
+        # lambdas = [0., 0.1, 1., 10.]
+        lambdas = [0.,]
         exp_id = (FLAGS.exp_id-1) % len(lambdas)
         opts['lmbda'] = lambdas[exp_id]
     else:
@@ -101,7 +102,8 @@ def main():
         exp_name = FLAGS.res_dir + '_'
     else:
         exp_name = ''
-    exp_name += 'beta' + str(opts['beta']) + '_lambda' + str(opts['lmbda'])
+    exp_name += 'gamma_' + str(opts['gamma']) + '_lambda_' + str(opts['lmbda'])
+    exp_name += '_run_' + str(FLAGS.exp_id)
     opts['exp_dir'] = os.path.join(opts['out_dir'], exp_name)
     opts['exp_dir'] = os.path.join(opts['out_dir'],
                         '{}_{:%Y_%m_%d_%H_%M}'.format(
@@ -118,7 +120,7 @@ def main():
     opts['it_num'] = FLAGS.num_it
     opts['batch_size'] = FLAGS.batch_size
     opts['lr'] = FLAGS.lr
-    opts['plot_every'] = 10000 #int(opts['print_every'] / 2.) + 1
+    opts['plot_every'] = 25000 #int(opts['print_every'] / 2.) + 1
     opts['evaluate_every'] = int(opts['plot_every'] / 5.) #int(opts['print_every'] / 2.) + 1
     opts['save_every'] = 10000000000
     opts['save_final'] = FLAGS.save_model
