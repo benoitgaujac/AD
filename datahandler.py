@@ -40,7 +40,7 @@ def _nominal_generator(dataset):
         r = np.random.uniform(low=-1, high=1, size=None)
         theta = configs.config_line['theta'] #float(pi / 6.)
         x = np.array((r*cos(theta), r*sin(theta)))
-    elif dataset==b'quadratic':
+    elif dataset=='quadratic':
         z = np.random.uniform(low=-1, high=1, size=None)
         x = np.array((z, z*z))
     else:

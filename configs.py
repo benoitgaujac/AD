@@ -15,7 +15,7 @@ config['out_dir'] = 'code_outputs'
 # - Experiment set up
 config['train_dataset_size'] = -1
 seed = 1234
-np.random.seed(seed)
+# np.random.seed(seed)
 config['theta'] = np.random.uniform(0,pi)
 np.random.seed()
 config['model'] = 'affine' # affine, nonaffine
@@ -35,7 +35,7 @@ config['score_non_linear'] = 'linear' #linear, cubic, sinh
 #     config['clip_score'] = True
 # else:
 config['clip_score'] = True
-config['clip_score_value'] = 100.
+config['clip_score_value'] = 10.
 # dilatation reg
 config['train_d'] = True #learning D
 if config['train_d']:
@@ -44,7 +44,7 @@ else:
     config['lmbda'] = 0.
 config['d_reg'] = 'frob' # trace, frob, det
 config['clip_d_reg'] = True
-config['clip_d_reg_value'] = 100.
+config['clip_d_reg_value'] = 10.
 # linear proj reg
 config['train_w'] = True #learning final w
 if config['train_w']:
