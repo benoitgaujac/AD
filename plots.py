@@ -98,6 +98,8 @@ def plot_train(opts, trloss, teloss, scores, heatmap, Phi, D, exp_dir, filename)
     axes[2].plot(x, Phi, linewidth=2, color='red', label=r'$\phi$')
     axes[2].plot(x, opts['theta']*np.ones(total_num), linewidth=2, linestyle='--',
                             color='blue', label=r'$\theta_x$')
+    axes[2].plot(x, np.abs(opts['theta']*np.ones(total_num)-Phi), linewidth=2, linestyle=':',
+                            color='green', label=r'$|\phi-\theta_x|$')
     axes[2].grid(axis='y')
     axes[2].set_yticks(np.linspace(0.,pi,7))
     axes[2].set_yticklabels(['0', r'$\frac{\pi}{6}$', r'$\frac{\pi}{3}$',
