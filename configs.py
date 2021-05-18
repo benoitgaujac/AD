@@ -14,7 +14,7 @@ config['out_dir'] = 'code_outputs'
 
 # - Experiment set up
 config['train_dataset_size'] = -1
-seed = 123
+seed = 1234
 np.random.seed(seed)
 config['theta'] = np.random.uniform(0,pi)
 np.random.seed()

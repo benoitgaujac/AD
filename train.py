@@ -355,7 +355,6 @@ class Run(object):
                                     Scores_anomalies[-1][1])
         logging.error(debug_str)
 
-        pdb.set_trace()
         # -- save training data
         if self.opts['save_train_data']:
             data_dir = 'train_data'
