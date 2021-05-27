@@ -24,9 +24,12 @@ source /share/apps/examples/source_files/cuda/cuda-10.0.source
 
 
 # array
-# python3 run_array.py --save_model --num_it 150000 --out_dir line_linear_w --scr_nonlin linear --exp_id $SGE_TASK_ID
+# python3 run_array.py --save_model --num_it 150000 --out_dir line_linear_rand_theta --train_w --scr_nonlin linear --exp_id $SGE_TASK_ID
+# python3 run_array.py --save_model --num_it 150000 --out_dir line_cubic_rand_theta --train_w --scr_nonlin cubic --exp_id $SGE_TASK_ID
+# python3 run_array.py --save_model --num_it 150000 --out_dir line_sinh_rand_theta --train_w --scr_nonlin sinh --exp_id $SGE_TASK_ID
+# python3 run_array.py --save_model --num_it 150000 --out_dir line_linear_w_rand_theta --scr_nonlin linear --exp_id $SGE_TASK_ID
 # python3 run_array.py --save_model --num_it 150000 --out_dir line_cubic_w_rand_theta --scr_nonlin cubic --exp_id $SGE_TASK_ID
-python3 run_array.py --save_model --num_it 150000 --out_dir line_sinh_w_rand_theta --scr_nonlin sinh --exp_id $SGE_TASK_ID
+# python3 run_array.py --save_model --num_it 150000 --out_dir line_sinh_w_rand_theta --scr_nonlin sinh --exp_id $SGE_TASK_ID
 
 # testing
 # python3 run_test.py --data_dir ../data --dataset mnist --out_dir mnist_zdim2_econv_dconv --full_cov_mat --net_archi conv_per_mix_econv_dconv --mode plot --zdim 2 --weights_file trained-VAE-final-200000 --model VAE --res_dir res_1_2021_03_31_10_03
