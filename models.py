@@ -46,7 +46,6 @@ class Model(object):
         # score fct
         score = tf.linalg.matmul(tf.expand_dims(A, 0), tf.expand_dims(inputs, -1))
         score = ops.non_linear(score, self.opts['score_non_linear'])
-        pdb.set_trace()
         if self.opts['train_w']:
             score = tf.linalg.matmul(tf.expand_dims(W, 0), score)
         else:
