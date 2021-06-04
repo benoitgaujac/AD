@@ -6,6 +6,7 @@ import configs
 from train import Run
 from datahandler import DataHandler
 import utils
+import itertools
 
 import tensorflow.compat.v1 as tf
 tf.disable_eager_execution()
@@ -25,7 +26,7 @@ parser.add_argument("--num_it", type=int, default=10000,
                     help='iteration number')
 parser.add_argument("--batch_size", type=int, default=100,
                     help='batch size')
-parser.add_argument("--lr", type=float, default=0.05,
+parser.add_argument("--lr", type=float, default=0.01,
                     help='learning rate size')
 # exp setup
 parser.add_argument("--exp_id", type=int,
@@ -75,20 +76,35 @@ def main():
     # Model set up
     opts['model'] = FLAGS.model
     opts['score_non_linear'] = FLAGS.scr_nonlin
-    opts['train_w'] = FLAGS.train_w
+    exp = list(itertools.product([False, True],
+                                [False,],
+                                [False,],
+                                [0. ,0., 0., 0., 0.]
+                                ))
+    exp += list(itertools.product([False, True],
+                                [True,],
+                                [False, True],
+                                [0. ,0., 0., 0., 0.]
+                                ))
+    exp_id = (FLAGS.exp_id-1) % len(exp)
+    # opts['train_w'] = FLAGS.train_w
+    opts['train_w'] = exp[exp_id][0]
     if opts['train_w']:
         opts['gamma'] = FLAGS.gamma
     else:
         opts['gamma'] = 0.
-    opts['train_d'] = FLAGS.train_d
+    # opts['train_d'] = FLAGS.train_d
+    opts['train_d'] = exp[exp_id][1]
+    # opts['d_const'] = FLAGS.d_const
+    opts['d_const'] = exp[exp_id][2]
     if opts['train_d']:
         # lambdas = [0., 0.1, 1., 10.]
-        lambdas = [0.,]
-        exp_id = (FLAGS.exp_id-1) % len(lambdas)
-        opts['lmbda'] = lambdas[exp_id]
+        # lambdas = [0.,]
+        # exp_id = (FLAGS.exp_id-1) % len(lambdas)
+        # opts['lmbda'] = lambdas[exp_id]
+        opts['lmbda'] = exp[exp_id][3]
     else:
         opts['lmbda'] = 0.
-    opts['d_const'] = FLAGS.d_const
 
     # Create directories
     if FLAGS.res_dir:
@@ -127,7 +143,7 @@ def main():
     opts['it_num'] = FLAGS.num_it
     opts['batch_size'] = FLAGS.batch_size
     opts['lr'] = FLAGS.lr
-    opts['plot_every'] = 25000 #int(opts['print_every'] / 2.) + 1
+    opts['plot_every'] = 5000 #int(opts['print_every'] / 2.) + 1
     opts['evaluate_every'] = int(opts['plot_every'] / 10.) #int(opts['print_every'] / 2.) + 1
     opts['save_every'] = 10000000000
     opts['save_final'] = FLAGS.save_model
