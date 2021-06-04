@@ -13,13 +13,16 @@ import pdb
 
 
 # def _data_generator(dataset_config):
-def _data_generator(dataset_size, dataset):
+def _data_generator(dataset_size, dataset, anomalous):
     # dataset_size = dataset_config[0]
     # dataset = dataset_config[1]
     # generate dataset
     n = 0
     while n<dataset_size:
-        y = np.random.randint(low=0, high=2, size=None, dtype='int32')
+        if anomalous:
+            y = np.random.randint(low=0, high=2, size=None, dtype='int32')
+        else:
+            y = 1
         # generate nominal
         if y==1:
             x = _nominal_generator(dataset)
@@ -78,7 +81,7 @@ class DataHandler(object):
         dataset_train = tf.data.Dataset.from_generator(_data_generator,
                                 output_types=(tf.float32, tf.int32),
                                 output_shapes=([2,], []),
-                                args=(self.train_size, self.dataset))
+                                args=(self.train_size, self.dataset, opts['use_anomalous']))
                                 # output_signature=(
                                 #     tf.TensorSpec(shape=(2,), dtype=tf.float32),
                                 #     tf.TensorSpec(shape=(), dtype=tf.int32)),
@@ -86,7 +89,7 @@ class DataHandler(object):
         dataset_test = tf.data.Dataset.from_generator(_data_generator,
                                 output_types=(tf.float32, tf.int32),
                                 output_shapes=([2,], []),
-                                args=(self.test_size, self.dataset))
+                                args=(self.test_size, self.dataset, opts['use_anomalous']))
                                 # output_signature=(
                                 #     tf.TensorSpec(shape=(2,), dtype=tf.float32),
                                 #     tf.TensorSpec(shape=(), dtype=tf.int32)),

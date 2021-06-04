@@ -6,9 +6,9 @@
 
 #$ -l gpu=True
 #$ -l tmem=1G
-#$ -l h_rt=2:00:00
+#$ -l h_rt=2:30:00
 
-#$ -t 1-10
+#$ -t 1-5
 
 #$ -N linline
 
@@ -16,20 +16,24 @@ source /share/apps/examples/source_files/python/python-3.6.4.source
 source /share/apps/examples/source_files/cuda/cuda-10.0.source
 
 # test local
-# python3 run.py --save_model --save_data --num_it 50000 --lmbda 0 --lr 0.005 --out_dir line_linear_w --scr_nonlin linear
-# python3 run.py --save_model --save_data --num_it 50000 --lmbda 0 --lr 0.005 --out_dir line_cubic_w --scr_nonlin cubic
-# python3 run.py --save_model --save_data --num_it 50000 --lmbda 0 --lr 0.005 --out_dir line_sinh_w --scr_nonlin sinh
-
-# python3 run.py --dataset quadratic --save_model --save_data --num_it 50000 --train_w --lmbda 0 --lr 0.01 --out_dir quadratic_linear --scr_nonlin linear
+# python3 run.py --save_model --save_data --num_it 50000 --lmbda 0 --lr 0.01 --out_dir line_linear --train_w --d_const --scr_nonlin linear
+# python3 run.py --save_model --save_data --num_it 50000 --lmbda 0 --lr 0.01 --out_dir line_cubic_w --scr_nonlin cubic
+# python3 run.py --save_model --save_data --num_it 50000 --lmbda 0 --lr 0.01 --out_dir line_sinh_w --scr_nonlin sinh
 
 
-# array
-# python3 run_array.py --save_model --num_it 150000 --out_dir line_linear_rand_theta --train_w --scr_nonlin linear --exp_id $SGE_TASK_ID
-# python3 run_array.py --save_model --num_it 150000 --out_dir line_cubic_rand_theta --train_w --scr_nonlin cubic --exp_id $SGE_TASK_ID
-# python3 run_array.py --save_model --num_it 150000 --out_dir line_sinh_rand_theta --train_w --scr_nonlin sinh --exp_id $SGE_TASK_ID
-# python3 run_array.py --save_model --num_it 150000 --out_dir line_linear_w_rand_theta --scr_nonlin linear --exp_id $SGE_TASK_ID
-# python3 run_array.py --save_model --num_it 150000 --out_dir line_cubic_w_rand_theta --scr_nonlin cubic --exp_id $SGE_TASK_ID
-# python3 run_array.py --save_model --num_it 150000 --out_dir line_sinh_w_rand_theta --scr_nonlin sinh --exp_id $SGE_TASK_ID
+# linear
+# python3 run_array.py --save_model --num_it 150000 --out_dir line_linear --scr_nonlin linear --train_w --train_d --d_const --exp_id $SGE_TASK_ID
+# python3 run_array.py --save_model --num_it 150000 --out_dir line_linear --scr_nonlin linear --train_w --exp_id $SGE_TASK_ID
+# python3 run_array.py --save_model --num_it 150000 --out_dir line_linear --scr_nonlin linear --train_w --d_const --exp_id $SGE_TASK_ID
+# python3 run_array.py --save_model --num_it 150000 --out_dir line_linear --scr_nonlin linear --train_d --d_const --exp_id $SGE_TASK_ID
+# python3 run_array.py --save_model --num_it 150000 --out_dir line_linear --scr_nonlin linear --exp_id $SGE_TASK_ID
+# python3 run_array.py --save_model --num_it 150000 --out_dir line_linear --scr_nonlin linear --d_const --exp_id $SGE_TASK_ID
+
+# python3 run_array.py --save_model --num_it 150000 --out_dir line_cubic --train_w --scr_nonlin cubic --exp_id $SGE_TASK_ID
+# python3 run_array.py --save_model --num_it 150000 --out_dir line_sinh --train_w --scr_nonlin sinh --exp_id $SGE_TASK_ID
+# python3 run_array.py --save_model --num_it 150000 --out_dir line_linear --scr_nonlin linear --exp_id $SGE_TASK_ID
+# python3 run_array.py --save_model --num_it 150000 --out_dir line_cubic --scr_nonlin cubic --exp_id $SGE_TASK_ID
+# python3 run_array.py --save_model --num_it 150000 --out_dir line_sinh --scr_nonlin sinh --exp_id $SGE_TASK_ID
 
 # testing
 # python3 run_test.py --data_dir ../data --dataset mnist --out_dir mnist_zdim2_econv_dconv --full_cov_mat --net_archi conv_per_mix_econv_dconv --mode plot --zdim 2 --weights_file trained-VAE-final-200000 --model VAE --res_dir res_1_2021_03_31_10_03

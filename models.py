@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow.compat.v1 as tf
-import math
+from math import pi
 
 import ops
 # import networks
@@ -11,14 +11,24 @@ class Model(object):
 
     def __init__(self, opts):
         self.opts = opts
-        # define different weights of the last layer
-        self.W = ops.init_w(self.opts, 'score/W')
-        self.d = ops.init_diagonal(self.opts, 'score/D')
-        self.D = tf.diag(self.d)
-        self.phi = ops.init_rotation(self.opts, 'score/phi')
-        rot = tf.stack([tf.math.cos(self.phi), -tf.math.sin(self.phi),
-                        tf.math.sin(self.phi), tf.math.cos(self.phi)], 0)
-        self.V = tf.reshape(rot, [2,2])
+
+    def init_model_params(self, opts, reuse=False):
+        """
+        init all the different model parameters
+        """
+        with tf.variable_scope('score', reuse=reuse):
+            W = ops.init_w(self.opts, 'W')
+            if self.opts['train_d']:
+                d = ops.init_diagonal(self.opts, 'D')
+            else:
+                d = tf.constant([0, 100],dtype='float32')
+            D = tf.diag(d)
+            phi = ops.init_rotation(self.opts, 'phi')
+            # phi = tf.clip_by_value(phi, 0., pi)
+            rot = tf.stack([tf.math.cos(phi), -tf.math.sin(phi),
+                            tf.math.sin(phi), tf.math.cos(phi)], 0)
+            V = tf.reshape(rot, [2,2])
+        return W, d, D, phi, V
 
     def score(self, inputs, reuse=False):
         """
@@ -27,21 +37,23 @@ class Model(object):
         inputs:  [batch,2]
         outputs: [batch,]
         """
-        with tf.variable_scope('score', reuse=reuse):
-            # affine transform
-            A = tf.linalg.matmul(self.D, tf.transpose(self.V))
-            A = tf.linalg.matmul(self.V, A)
-            # score fct
-            score = tf.linalg.matmul(tf.expand_dims(A, 0), tf.expand_dims(inputs, -1))
-            score = ops.non_linear(score, self.opts['score_non_linear'],
-                                    self.opts['clip_score_value'])
-            if self.opts['train_w']:
-                score = tf.linalg.matmul(tf.expand_dims(self.W, 0), score)
-            else:
-                score = tf.reduce_sum(score, axis=1)
-            if self.opts['clip_score']:
-                score = tf.clip_by_value(score, -self.opts['clip_score_value'],
-                                    self.opts['clip_score_value'])
+
+        # get model params
+        W, _, D, _, V = self.init_model_params(self.opts, reuse=reuse)
+        # affine transform
+        A = tf.linalg.matmul(D, tf.transpose(V))
+        A = tf.linalg.matmul(V, A)
+        # score fct
+        score = tf.linalg.matmul(tf.expand_dims(A, 0), tf.expand_dims(inputs, -1))
+        score = ops.non_linear(score, self.opts['score_non_linear'])
+        pdb.set_trace()
+        if self.opts['train_w']:
+            score = tf.linalg.matmul(tf.expand_dims(W, 0), score)
+        else:
+            score = tf.reduce_sum(score, axis=1)
+        if self.opts['clip_score']:
+            score = tf.clip_by_value(score, -self.opts['clip_score_value'],
+                                self.opts['clip_score_value'])
 
         return tf.reshape(score, [-1,1])
 
@@ -49,15 +61,15 @@ class Model(object):
         """
         Return dilatation regulation
         """
-        with tf.variable_scope('score', reuse=reuse):
-            if self.opts['d_reg']=='trace':
-                reg = tf.linalg.trace(self.D)
-            elif self.opts['d_reg']=='frob':
-                reg = tf.sqrt(tf.linalg.trace(tf.square(self.D)))
-            elif self.opts['d_reg']=='det':
-                reg = tf.linalg.det(self.D)
-            else:
-                raise ValueError('Unknown {} D reg.' % self.opts['d_reg'])
+        _, _, D, _, _ = self.init_model_params(self.opts, reuse=reuse)
+        if self.opts['d_reg']=='trace':
+            reg = tf.linalg.trace(D)
+        elif self.opts['d_reg']=='frob':
+            reg = tf.sqrt(tf.linalg.trace(tf.square(D)))
+        elif self.opts['d_reg']=='det':
+            reg = tf.linalg.det(D)
+        else:
+            raise ValueError('Unknown {} D reg.' % self.opts['d_reg'])
         if self.opts['clip_d_reg']:
             reg = tf.clip_by_value(reg, -self.opts['clip_d_reg_value'],
                                     self.opts['clip_d_reg_value'])
@@ -69,15 +81,15 @@ class Model(object):
         """
         Return W regulation
         """
-        with tf.variable_scope('score', reuse=reuse):
-            if self.opts['w_reg']=='l1':
-                reg = tf.reduce_sum(tf.math.abs(self.W))
-            elif self.opts['w_reg']=='l2':
-                reg = tf.reduce_sum(tf.math.square(self.W))
-            elif self.opts['w_reg']=='l2sq':
-                reg = tf.reduce_sum(tf.math.square(self.W))
-            else:
-                raise ValueError('Unknown {} W reg.' % self.opts['w_reg'])
+        W, _, _, _, _ = self.init_model_params(self.opts, reuse=reuse)
+        if self.opts['w_reg']=='l1':
+            reg = tf.reduce_sum(tf.math.abs(W))
+        elif self.opts['w_reg']=='l2':
+            reg = tf.reduce_sum(tf.math.square(W))
+        elif self.opts['w_reg']=='l2sq':
+            reg = tf.reduce_sum(tf.math.square(W))
+        else:
+            raise ValueError('Unknown {} W reg.' % self.opts['w_reg'])
         if self.opts['clip_w_reg']:
             reg = tf.clip_by_value(reg, -self.opts['clip_w_reg_value'],
                                     self.opts['clip_w_reg_value'])
@@ -95,8 +107,8 @@ class Affine(Model):
         return score, D reg and W reg for the affine transformation
         """
         score = self.score(inputs, reuse=reuse)
-        d_reg = self.D_reg(reuse=reuse)
-        w_reg = self.W_reg(reuse=reuse)
+        d_reg = self.D_reg(reuse=True)
+        w_reg = self.W_reg(reuse=True)
 
         return score, d_reg, w_reg
 

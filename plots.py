@@ -110,8 +110,8 @@ def plot_train(opts, trloss, teloss, scores, heatmap, Phi, D, exp_dir, filename)
 
     ### The anomalous losses
     array_loss = np.abs(np.array(scores).reshape((-1,2)))
-    for y, (color, label) in zip([np.abs(array_loss[:,0]),
-                                np.abs(array_loss[:,1])],
+    for y, (color, label) in zip([array_loss[:,0],
+                                array_loss[:,1]],
                                 [('red', 'nominal score'),
                                 ('blue', '|anomalous score|')]):
         total_num = len(y)
@@ -121,7 +121,7 @@ def plot_train(opts, trloss, teloss, scores, heatmap, Phi, D, exp_dir, filename)
         x = np.arange(1, total_num + 1)
         axes[3].plot(x, y, linewidth=1, color=color, label=label)
     axes[3].legend(loc='upper right')
-    axes[3].set_title('Log Scores')
+    axes[3].set_title('Scores')
 
     ### D
     array_D = np.array(D).reshape((-1,2))

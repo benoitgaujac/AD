@@ -43,7 +43,7 @@ class Run(object):
         # - Define Objectives
         score, self.d_reg, self.w_reg = self.model.losses(
                                     inputs=x,
-                                    reuse=True)
+                                    reuse=False)
         # obj
         self.score = tf.reduce_mean(score)
         # self.objective = tf.math.abs(score) - tf.cast(y, dtype=tf.float32) * (self.lmbda*self.d_reg + self.gamma*self.w_reg)
@@ -61,17 +61,14 @@ class Run(object):
         self.add_optimizers()
 
         # - nominal/anomalous score
-        score = self.model.score(
-                                    inputs=self.x,
-                                    reuse=True)
+        score = self.model.score(inputs=self.x, reuse=True)
         score_anomalies = self.y*score + (1-self.y)*tf.abs(score)
         self.score_anomalies = tf.reduce_mean(score_anomalies)
         # self.heatmap_score_anomalies = tf.math.abs(score)
         self.heatmap_score_anomalies = score
 
         # - Params values
-        self.phi = self.model.phi
-        self.d = self.model.d
+        _, self.d, _, self.phi, _ = self.model.init_model_params(self.opts, reuse=True)
 
         # - Init iterators, sess, saver and load trained weights if needed, else init variables
         self.sess = tf.Session()
@@ -186,7 +183,7 @@ class Run(object):
                 Losses.append(losses)
                 # model params
                 psi, d = self.sess.run([self.phi, self.d], feed_dict={})
-                Psi.append(psi)
+                Psi.append(psi[0])
                 D.append(d)
                 # testing loss
                 losses, scores_anomalies = np.zeros(4), np.zeros(2)

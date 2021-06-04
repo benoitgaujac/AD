@@ -19,6 +19,8 @@ parser.add_argument("--mode", default='train',
                     help='mode to run [train/vizu/fid/test]')
 parser.add_argument("--dataset", default='line',
                     help='dataset')
+parser.add_argument("--anomalous", action='store_true', default=False,
+                    help='whether or not use anomalous data')
 parser.add_argument("--num_it", type=int, default=10000,
                     help='iteration number')
 parser.add_argument("--batch_size", type=int, default=100,
@@ -44,8 +46,8 @@ parser.add_argument("--gamma", type=float, default=0.,
                     help='weight regulation')
 parser.add_argument("--train_d", action='store_false', default=True,
                     help='whether to learn D')
-parser.add_argument("--lmbda", type=float, default=0.,
-                    help='dilatation reg')
+parser.add_argument("--d_const", action='store_false', default=True,
+                    help='whether to set beta=1/alpha')
 # saving opt
 parser.add_argument('--save_model', action='store_false', default=True,
                     help='save final model weights [True/False]')
@@ -67,6 +69,8 @@ def main():
         opts = configs.config_quadratic
     else:
         raise ValueError('Unknown {} dataset' % FLAGS.dataset)
+    if FLAGS.anomalous:
+        opts['use_anomalous'] = FLAGS.anomalous
 
     # Model set up
     opts['model'] = FLAGS.model
@@ -84,6 +88,7 @@ def main():
         opts['lmbda'] = lambdas[exp_id]
     else:
         opts['lmbda'] = 0.
+    opts['d_const'] = FLAGS.d_const
 
     # Create directories
     if FLAGS.res_dir:
@@ -102,7 +107,9 @@ def main():
         exp_name = FLAGS.res_dir + '_'
     else:
         exp_name = ''
-    exp_name += 'gamma_' + str(opts['gamma']) + '_lambda_' + str(opts['lmbda'])
+    exp_name += 'w_' + str(opts['train_w']) + '_d_' + str(opts['train_d'])
+    exp_name += '_constr_d_' + str(opts['d_const'])
+    exp_name += '_g' + str(opts['gamma']) + '_l' + str(opts['lmbda'])
     exp_name += '_run_' + str(FLAGS.exp_id)
     opts['exp_dir'] = os.path.join(opts['out_dir'], exp_name)
     opts['exp_dir'] = os.path.join(opts['out_dir'],
