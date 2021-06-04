@@ -24,7 +24,7 @@ class Model(object):
                 d = tf.constant([0, 100],dtype='float32')
             D = tf.diag(d)
             phi = ops.init_rotation(self.opts, 'phi')
-            # phi = tf.clip_by_value(phi, 0., pi)
+            phi = tf.clip_by_value(phi, 0., pi)
             rot = tf.stack([tf.math.cos(phi), -tf.math.sin(phi),
                             tf.math.sin(phi), tf.math.cos(phi)], 0)
             V = tf.reshape(rot, [2,2])
