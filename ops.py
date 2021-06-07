@@ -78,9 +78,9 @@ def init_diagonal(opts, scope):
         else:
             raise Exception('Unknown %s initialization for D' % opts['d_init'])
         if const:
-            eps = 10e-5
-            D = tf.clip_by_value(D, -opts['clip_alpha_value'], opts['clip_alpha_value'])
-            D = tf.concat([tf.exp(D),1./(eps + tf.exp(D))], axis=0)
+            # eps = 10e-5
+            # D = tf.concat([tf.exp(D),1./(eps + tf.exp(D))], axis=0)
+            D = tf.concat([D,1./D], axis=0)
         return D
 
 def init_rotation(opts, scope):

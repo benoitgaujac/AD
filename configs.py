@@ -45,7 +45,7 @@ if config['train_d']:
 else:
     config['lmbda'] = 0.
 config['d_const'] = False
-config['clip_alpha_value'] = 10e3 # clipping alpha if d is constrained
+# config['clip_alpha_value'] = 10e3 # clipping alpha if d is constrained
 config['d_reg'] = 'frob' # trace, frob, det
 config['clip_d_reg'] = True
 config['clip_d_reg_value'] = 10.

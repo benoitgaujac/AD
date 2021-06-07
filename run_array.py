@@ -76,12 +76,12 @@ def main():
     # Model set up
     opts['model'] = FLAGS.model
     opts['score_non_linear'] = FLAGS.scr_nonlin
-    exp = list(itertools.product([False, True],
+    exp = list(itertools.product([False,],
                                 [False,],
                                 [False,],
                                 [0. ,0., 0., 0., 0.]
                                 ))
-    exp += list(itertools.product([False, True],
+    exp += list(itertools.product([False,],
                                 [True,],
                                 [False, True],
                                 [0. ,0., 0., 0., 0.]
@@ -143,7 +143,7 @@ def main():
     opts['it_num'] = FLAGS.num_it
     opts['batch_size'] = FLAGS.batch_size
     opts['lr'] = FLAGS.lr
-    opts['plot_every'] = 5000 #int(opts['print_every'] / 2.) + 1
+    opts['plot_every'] = 500 #int(opts['print_every'] / 2.) + 1
     opts['evaluate_every'] = int(opts['plot_every'] / 10.) #int(opts['print_every'] / 2.) + 1
     opts['save_every'] = 10000000000
     opts['save_final'] = FLAGS.save_model
