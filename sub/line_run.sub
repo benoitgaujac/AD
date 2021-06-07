@@ -8,7 +8,7 @@
 #$ -l tmem=1G
 #$ -l h_rt=2:30:00
 
-#$ -t 1-15
+#$ -t 1-27
 
 #$ -N lin
 
@@ -16,13 +16,13 @@ source /share/apps/examples/source_files/python/python-3.6.4.source
 source /share/apps/examples/source_files/cuda/cuda-10.0.source
 
 # test local
-# python3 run.py --save_model --save_data --num_it 50000 --lmbda 0 --lr 0.01 --out_dir line_linear_test --train_w --d_const --scr_nonlin linear
-# python3 run.py --save_model --save_data --num_it 50000 --lmbda 0 --lr 0.01 --out_dir line_cubic_w --scr_nonlin cubic
-# python3 run.py --save_model --save_data --num_it 50000 --lmbda 0 --lr 0.01 --out_dir line_sinh_w --scr_nonlin sinh
+# python3 run.py --save_model --save_data --num_it 50000 --lmbda 1.0 --lr 0.01 --out_dir line_linear_alpha_reg --train_w --scr_nonlin linear
+# python3 run.py --save_model --save_data --num_it 50000 --lr 0.01 --out_dir line_cubic_w --scr_nonlin cubic
+# python3 run.py --save_model --save_data --num_it 50000 --lr 0.01 --out_dir line_sinh_w --scr_nonlin sinh
 
 
 # linear
-python3 run_array.py --save_model --num_it 10000 --out_dir line_linear --scr_nonlin linear --exp_id $SGE_TASK_ID
+python3 run_array.py --save_model --num_it 10000 --out_dir line_linear_alpha_reg --scr_nonlin linear --train_w --exp_id $SGE_TASK_ID
 # python3 run_array.py --save_model --num_it 50000 --out_dir line_linear --scr_nonlin linear --train_w --train_d --d_const --exp_id $SGE_TASK_ID
 # python3 run_array.py --save_model --num_it 50000 --out_dir line_linear --scr_nonlin linear --train_w --exp_id $SGE_TASK_ID
 # python3 run_array.py --save_model --num_it 50000 --out_dir line_linear --scr_nonlin linear --train_w --d_const --exp_id $SGE_TASK_ID

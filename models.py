@@ -61,12 +61,18 @@ class Model(object):
         Return dilatation regulation
         """
         _, _, D, _, _ = self.init_model_params(self.opts, reuse=reuse)
+        mask = tf.Variable([1., 0.])
         if self.opts['d_reg']=='trace':
             reg = tf.linalg.trace(D)
         elif self.opts['d_reg']=='frob':
             reg = tf.sqrt(tf.linalg.trace(tf.square(D)))
         elif self.opts['d_reg']=='det':
             reg = tf.linalg.det(D)
+        elif self.opts['d_reg']=='alpha':
+            # pdb.set_trace()
+            diag = tf.linalg.diag_part(D)
+            reg = tf.abs(tf.abs(diag*mask) - self.opts['d_reg_value'])
+            reg = tf.reduce_sum(reg)
         else:
             raise ValueError('Unknown {} D reg.' % self.opts['d_reg'])
         if self.opts['clip_d_reg']:

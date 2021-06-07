@@ -49,6 +49,8 @@ parser.add_argument("--train_d", action='store_false', default=True,
                     help='whether to learn D')
 parser.add_argument("--d_const", action='store_false', default=True,
                     help='whether to set beta=1/alpha')
+parser.add_argument("--lmbda", type=float, default=0.,
+                    help='dilatation reg')
 # saving opt
 parser.add_argument('--save_model', action='store_false', default=True,
                     help='save final model weights [True/False]')
@@ -73,9 +75,9 @@ def main():
     if FLAGS.anomalous:
         opts['use_anomalous'] = FLAGS.anomalous
 
-    # Model set up
-    opts['model'] = FLAGS.model
-    opts['score_non_linear'] = FLAGS.scr_nonlin
+    # Exp setup
+    """
+    # multi configs of training w, D, constrained D
     exp = list(itertools.product([False,],
                                 [False,],
                                 [False,],
@@ -87,24 +89,33 @@ def main():
                                 [0. ,0., 0., 0., 0.]
                                 ))
     exp_id = (FLAGS.exp_id-1) % len(exp)
-    # opts['train_w'] = FLAGS.train_w
     opts['train_w'] = exp[exp_id][0]
+    opts['train_d'] = exp[exp_id][1]
+    opts['d_const'] = exp[exp_id][2]
+    opts['lmbda'] = exp[exp_id][3]
     if opts['train_w']:
         opts['gamma'] = FLAGS.gamma
     else:
         opts['gamma'] = 0.
-    # opts['train_d'] = FLAGS.train_d
-    opts['train_d'] = exp[exp_id][1]
-    # opts['d_const'] = FLAGS.d_const
-    opts['d_const'] = exp[exp_id][2]
-    if opts['train_d']:
-        # lambdas = [0., 0.1, 1., 10.]
-        # lambdas = [0.,]
-        # exp_id = (FLAGS.exp_id-1) % len(lambdas)
-        # opts['lmbda'] = lambdas[exp_id]
-        opts['lmbda'] = exp[exp_id][3]
+    """
+    # Different alpha reg and lambda combination
+    exp = list(itertools.product([0.1, 1., 10.],
+                                [0.1, 1., 10.]))
+    # setting exp id
+    exp_id = (FLAGS.exp_id-1) % len(exp)
+    opts['lmbda'] = exp[exp_id][0]
+    opts['d_reg_value'] =  exp[exp_id][1]
+    opts['train_w'] = FLAGS.train_w
+    if opts['train_w']:
+        opts['gamma'] = FLAGS.gamma
     else:
-        opts['lmbda'] = 0.
+        opts['gamma'] = 0.
+    opts['train_d'] = FLAGS.train_d
+    opts['d_const'] = FLAGS.d_const
+
+    # Model set up
+    opts['model'] = FLAGS.model
+    opts['score_non_linear'] = FLAGS.scr_nonlin
 
     # Create directories
     if FLAGS.res_dir:

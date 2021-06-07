@@ -45,9 +45,9 @@ if config['train_d']:
 else:
     config['lmbda'] = 0.
 config['d_const'] = False
-# config['clip_alpha_value'] = 10e3 # clipping alpha if d is constrained
-config['d_reg'] = 'frob' # trace, frob, det
-config['clip_d_reg'] = True
+config['d_reg'] = 'alpha' # trace, frob, det, alpha
+config['d_reg_value'] =  10.0 #only used to reg. alpha
+config['clip_d_reg'] = False
 config['clip_d_reg_value'] = 10.
 
 # - W set up
@@ -64,7 +64,7 @@ config['clip_w_reg_value'] = 100.
 config['init_std'] = 0.0099999
 config['init_bias'] = 0.0
 config['w_init'] = 'glorot_uniform' #normal, he, glorot, glorot_he, glorot_uniform, ('uniform', range)
-config['d_init'] = 'glorot_uniform' #normal, he, glorot, glorot_he, glorot_uniform, ('uniform', range)
+config['d_init'] = 'normal' #normal, he, glorot, glorot_he, glorot_uniform, ('uniform', range)
 config['mlp_init'] = 'glorot_uniform' #normal, he, glorot, glorot_he, glorot_uniform, ('uniform', range)
 config['conv_init'] = 'glorot_uniform' #he, glorot, normilized_glorot, truncated_norm
 
