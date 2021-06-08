@@ -3,7 +3,7 @@ import tensorflow.compat.v1 as tf
 from math import pi
 
 import ops
-# import networks
+import networks
 
 import pdb
 
@@ -11,6 +11,7 @@ class Model(object):
 
     def __init__(self, opts):
         self.opts = opts
+        self.model = opts['model']
 
     def init_model_params(self, opts, reuse=False):
         """
@@ -30,6 +31,23 @@ class Model(object):
             V = tf.reshape(rot, [2,2])
         return W, d, D, phi, V
 
+
+    def nonaffine_transform(self, inputs, reuse=False):
+        """
+        Perform non affine transformation on the inputs
+        """
+        outputs = networks.mlp(self.opts, inputs, output_dim=2,
+                            nlayers=self.opts['nonaffine_nlayers'],
+                            init=self.opts['nonaffine_init'],
+                            stddev=self.opts['nonaffine_init_std'],
+                            bias=self.opts['nonaffine_init_bias'],
+                            nonlinear=self.opts['nonaffine_non_linear'],
+                            alpha=self.opts['nonaffine_alpha'],
+                            scope='non_affine', reuse=reuse)
+
+        return outputs
+
+
     def score(self, inputs, reuse=False):
         """
         Return the output of last layer of the score function defined by:
@@ -38,9 +56,13 @@ class Model(object):
         outputs: [batch,]
         """
 
+        ### nonaffine transform
+        if self.model=='nonaffine':
+            inputs = self.nonaffine_transform(inputs, reuse=reuse)
+        ### affine transform
         # get model params
         W, _, D, _, V = self.init_model_params(self.opts, reuse=reuse)
-        # affine transform
+        # affine
         A = tf.linalg.matmul(D, tf.transpose(V))
         A = tf.linalg.matmul(V, A)
         # score fct
@@ -54,7 +76,7 @@ class Model(object):
             score = tf.clip_by_value(score, -self.opts['clip_score_value'],
                                 self.opts['clip_score_value'])
 
-        return tf.reshape(score, [-1,1])
+        return tf.reshape(score, [-1,1]), inputs
 
     def D_reg(self, reuse=False):
         """
@@ -101,45 +123,55 @@ class Model(object):
 
         return reg
 
-
-class Affine(Model):
-
-    def __init__(self, opts):
-        super().__init__(opts)
-
     def losses(self, inputs, reuse=False):
         """
-        return score, D reg and W reg for the affine transformation
+        return score, transformed outputs, D & W reg
         """
-        score = self.score(inputs, reuse=reuse)
+        score, _ = self.score(inputs, reuse=reuse)
         d_reg = self.D_reg(reuse=True)
         w_reg = self.W_reg(reuse=True)
 
         return score, d_reg, w_reg
 
 
-class NonAffine(Model):
+# class Affine(Model):
+#
+#     def __init__(self, opts):
+#         super().__init__(opts)
+#
+#     def losses(self, inputs, reuse=False):
+#         """
+#         return score, D reg and W reg for the affine transformation
+#         """
+#         score = self.score(inputs, reuse=reuse)
+#         d_reg = self.D_reg(reuse=True)
+#         w_reg = self.W_reg(reuse=True)
+#
+#         return score, inputs, d_reg, w_reg
 
-    def __init__(self, opts):
-        super().__init__(opts)
 
-    def losses(self, inputs, reuse=False):
-        """
-        return score, D reg and W reg for the affine transformation
-        """
-
-        raise ValueError('Non affine score fct not implemented')
-
-        outputs = networks.nn(self.opts, inputs, output_dim=2,
-                            nlayers=self.opts['nlayers'],
-                            init=self.opts['nonaffine_init'],
-                            stddev=self.opts['nonaffine_init_std'],
-                            bias=self.opts['nonaffine_init_bias'],
-                            nonlinear=self.opts['nonaffine_non_linear'],
-                            alpha=self.opts['nonaffine_alpha'],
-                            scope='non_affine', reuse=reuse)
-        score = self.score(outputs, reuse=reuse)
-        d_reg = self.D_reg(reuse=True)
-        w_reg = self.W_reg(reuse=True)
-
-        return score, d_reg, w_reg
+# class NonAffine(Model):
+#
+#     def __init__(self, opts):
+#         super().__init__(opts)
+#
+#     def losses(self, inputs, reuse=False):
+#         """
+#         return score, D reg and W reg for the affine transformation
+#         """
+#
+#         raise ValueError('Non affine score fct not implemented')
+#
+#         outputs = networks.nn(self.opts, inputs, output_dim=2,
+#                             nlayers=self.opts['nlayers'],
+#                             init=self.opts['nonaffine_init'],
+#                             stddev=self.opts['nonaffine_init_std'],
+#                             bias=self.opts['nonaffine_init_bias'],
+#                             nonlinear=self.opts['nonaffine_non_linear'],
+#                             alpha=self.opts['nonaffine_alpha'],
+#                             scope='non_affine', reuse=reuse)
+#         score = self.score(outputs, reuse=reuse)
+#         d_reg = self.D_reg(reuse=True)
+#         w_reg = self.W_reg(reuse=True)
+#
+#         return score, outputs, d_reg, w_reg

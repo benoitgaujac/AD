@@ -29,12 +29,13 @@ class Run(object):
         self.add_ph()
 
         # - Instantiate Model
-        if self.opts['model']=='affine':
-            self.model = models.Affine(self.opts)
-        elif self.opts['model']=='nonaffine':
-            self.model = NonAffine.Affine(self.opts)
-        else:
-            raise ValueError('Unknown {} model' % self.opts['model'])
+        self.model = models.Model(self.opts)
+        # if self.opts['model']=='affine':
+        #     self.model = models.model(self.opts)
+        # elif self.opts['model']=='nonaffine':
+        #     self.model = NonAffine.Affine(self.opts)
+        # else:
+        #     raise ValueError('Unknown {} model' % self.opts['model'])
 
         # - Data/label
         x, y = self.data.next_element
@@ -61,11 +62,14 @@ class Run(object):
         self.add_optimizers()
 
         # - nominal/anomalous score
-        score = self.model.score(inputs=self.x, reuse=True)
+        score, _ = self.model.score(inputs=self.x, reuse=True)
         score_anomalies = self.y*score + (1-self.y)*tf.abs(score)
         self.score_anomalies = tf.reduce_mean(score_anomalies)
         # self.heatmap_score_anomalies = tf.math.abs(score)
         self.heatmap_score_anomalies = score
+
+        # - transformed outputs for non affine model
+        _, self.transformed = self.model.score(inputs=self.x, reuse=True)
 
         # - Params values
         _, self.d, _, self.phi, _ = self.model.init_model_params(self.opts, reuse=True)
@@ -259,10 +263,24 @@ class Run(object):
                 heatmap = self.sess.run(self.heatmap_score_anomalies,
                                     feed_dict=feed_dict)
                 heatmap = heatmap.reshape([200,200])
+                # non affine transformation
+                if self.opts['model']=='nonaffine':
+                    batch_inputs = self.data._sample_observation(
+                                    200,
+                                    self.opts['dataset'],
+                                    True)
+                    feed_dict={self.x: batch_inputs[0],
+                                    self.gamma: self.opts['gamma'],
+                                    self.lmbda: self.opts['lmbda']}
+                    transformed = self.sess.run(self.transformed,
+                                    feed_dict=feed_dict)
+                else:
+                    transformed = None
 
                 # plot
                 plot_train(self.opts, Losses, Losses_test,
                                     Scores_anomalies, heatmap,
+                                    batch_inputs[0], transformed,
                                     Psi, D, exp_dir,
                                     'res_it%07d.png' % (it))
 

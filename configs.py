@@ -67,6 +67,7 @@ config['w_init'] = 'glorot_uniform' #normal, he, glorot, glorot_he, glorot_unifo
 config['d_init'] = 'normal' #normal, he, glorot, glorot_he, glorot_uniform, ('uniform', range)
 config['mlp_init'] = 'glorot_uniform' #normal, he, glorot, glorot_he, glorot_uniform, ('uniform', range)
 config['conv_init'] = 'glorot_uniform' #he, glorot, normilized_glorot, truncated_norm
+config['nonaffine_nlayers'] = 2
 config['nonaffine_init'] = 'glorot_uniform' #normal, he, glorot, glorot_he, glorot_uniform, ('uniform', range)
 config['nonaffine_init_std'] = 0.0099999
 config['nonaffine_init_bias'] = 0.0

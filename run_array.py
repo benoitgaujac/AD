@@ -98,6 +98,7 @@ def main():
     else:
         opts['gamma'] = 0.
     """
+    """
     # Different alpha reg and lambda combination
     exp = list(itertools.product([0.1, 1., 10.],
                                 [0.1, 1., 10.]))
@@ -112,6 +113,12 @@ def main():
         opts['gamma'] = 0.
     opts['train_d'] = FLAGS.train_d
     opts['d_const'] = FLAGS.d_const
+    """
+    # Different scaling factor for non affine model
+    exp = [0.1, 1., 10.]
+    # setting exp id
+    exp_id = (FLAGS.exp_id-1) % len(exp)
+    opts['nonaffine_alpha'] = exp[exp_id]
 
     # Model set up
     opts['model'] = FLAGS.model
@@ -130,9 +137,12 @@ def main():
     out_dir = os.path.join(out_dir, FLAGS.out_dir)
     if not tf.io.gfile.isdir(out_dir):
         utils.create_dir(out_dir)
-    opts['out_dir'] = os.path.join(out_dir, 'alpha_{}'.format(opts['d_reg_value']))
+    opts['out_dir'] = os.path.join(out_dir, 'na_alpha{}'.format(opts['nonaffine_alpha']))
     if not tf.io.gfile.isdir(opts['out_dir']):
         utils.create_dir(opts['out_dir'])
+    # opts['out_dir'] = os.path.join(out_dir, 'alpha{}'.format(opts['d_reg_value']))
+    # if not tf.io.gfile.isdir(opts['out_dir']):
+    #     utils.create_dir(opts['out_dir'])
     if FLAGS.res_dir:
         exp_name = FLAGS.res_dir + '_'
     else:
@@ -157,7 +167,7 @@ def main():
     opts['it_num'] = FLAGS.num_it
     opts['batch_size'] = FLAGS.batch_size
     opts['lr'] = FLAGS.lr
-    opts['plot_every'] = 1000 #int(opts['print_every'] / 2.) + 1
+    opts['plot_every'] = 2000 #int(opts['print_every'] / 2.) + 1
     opts['evaluate_every'] = int(opts['plot_every'] / 10.) #int(opts['print_every'] / 2.) + 1
     opts['save_every'] = 10000000000
     opts['save_final'] = FLAGS.save_model

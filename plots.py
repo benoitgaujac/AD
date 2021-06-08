@@ -12,16 +12,17 @@ import utils
 import pdb
 
 
-def plot_train(opts, trloss, teloss, scores, heatmap, Phi, D, exp_dir, filename):
+def plot_train(opts, trloss, teloss, scores, heatmap, inputs, transformed, Phi, D, exp_dir, filename):
 
     """ Generates and saves the plot of the following layout:
         img1 | img2 | img3
 
         img1    -   obj/training curves
-        img2    -   heatmap of score fct
-        img3    -   Phi
-        img4    -   nominal/anomalus scores
-        img5    -   Diag values
+        img2    -   nominal/anomalus scores
+        img3    -   Diag values
+        img4    -   Phi
+        img5    -   heatmap of score fct
+        img6    -   transformed inputs if non affine
 
     """
 
@@ -30,9 +31,9 @@ def plot_train(opts, trloss, teloss, scores, heatmap, Phi, D, exp_dir, filename)
     dpi = 100
     height_pic = 1000
     width_pic = 1000
-    fig_width = height_pic / float(dpi)
-    fig_height = 5 * width_pic / float(dpi)
-    fig, axes = plt.subplots(nrows=1, ncols=5, figsize=(fig_height, fig_width))
+    fig_width = 3 *height_pic / float(dpi)
+    fig_height = 2 * width_pic / float(dpi)
+    fig, axes = plt.subplots(nrows=3, ncols=2, figsize=(fig_height, fig_width))
 
     ### The loss curves
     # test
@@ -54,7 +55,7 @@ def plot_train(opts, trloss, teloss, scores, heatmap, Phi, D, exp_dir, filename)
         # y = np.log(y[::x_step])
         x = np.arange(1, total_num + 1)
         # y = np.log(y)
-        axes[0].plot(x, y, linewidth=2, color=color, label=label)
+        axes[0,0].plot(x, y, linewidth=2, color=color, label=label)
     # train
     array_loss = np.array(trloss).reshape((-1,4))
     obj = array_loss[:,0]
@@ -74,8 +75,8 @@ def plot_train(opts, trloss, teloss, scores, heatmap, Phi, D, exp_dir, filename)
         # y = np.log(y[::x_step])
         x = np.arange(1, total_num + 1)
         # y = np.log(y)
-        axes[0].plot(x, y, linewidth=2, color=color, linestyle='--', label=label)
-    axes[0].grid(axis='y')
+        axes[0,0].plot(x, y, linewidth=2, color=color, linestyle='--', label=label)
+    axes[0,0].grid(axis='y')
     # handles, labels = plt.gca().get_legend_handles_labels()
     # order, nlabels = [], len(labels)
     # for i in range(nlabels):
@@ -84,29 +85,8 @@ def plot_train(opts, trloss, teloss, scores, heatmap, Phi, D, exp_dir, filename)
     #     else:
     #         order.append(int(i/2))
     # plt.legend([handles[idx] for idx in order],[labels[idx] for idx in order],loc='upper right')
-    axes[0].legend(loc='best', ncol=2)
-    axes[0].set_title('Log Losses')
-
-    ### The score heatmap
-    axes[1].imshow(heatmap, cmap='hot_r', interpolation='nearest')
-    axes[1].set_title('Score heatmap')
-    fig.colorbar(axes[1].imshow(heatmap, cmap='hot_r', interpolation='nearest'), ax=axes[1], shrink=0.75, fraction=0.08) #, format=format[dataset])
-
-    ### Phi
-    total_num = len(Phi)
-    x = np.arange(1, total_num + 1)
-    axes[2].plot(x, Phi, linewidth=2, color='red', label=r'$\phi$')
-    axes[2].plot(x, opts['theta']*np.ones(total_num), linewidth=2, linestyle='--',
-                            color='blue', label=r'$\theta_x$')
-    axes[2].plot(x, np.abs(opts['theta']*np.ones(total_num)-Phi), linewidth=2, linestyle=':',
-                            color='green', label=r'$|\phi-\theta_x|$')
-    axes[2].grid(axis='y')
-    axes[2].set_yticks(np.linspace(0.,pi,7))
-    axes[2].set_yticklabels(['0', r'$\frac{\pi}{6}$', r'$\frac{\pi}{3}$',
-                            r'$\frac{\pi}{2}$', r'$\frac{2\pi}{3}$',
-                            r'$\frac{5\pi}{6}$', r'$\pi$'])
-    axes[2].legend(loc='best')
-    axes[2].set_title(r'$\Phi$')
+    axes[0,0].legend(loc='best', ncol=2)
+    axes[0,0].set_title('Log Losses')
 
     ### The anomalous losses
     array_loss = np.abs(np.array(scores).reshape((-1,2)))
@@ -119,17 +99,61 @@ def plot_train(opts, trloss, teloss, scores, heatmap, Phi, D, exp_dir, filename)
         # x = np.arange(1, len(y) + 1, x_step)
         # y = np.log(y)
         x = np.arange(1, total_num + 1)
-        axes[3].plot(x, y, linewidth=1, color=color, label=label)
-    axes[3].legend(loc='upper right')
-    axes[3].set_title('Scores')
+        axes[0,1].plot(x, y, linewidth=1, color=color, label=label)
+    axes[0,1].legend(loc='upper right')
+    axes[0,1].set_title('Scores')
+
+    ### Phi
+    total_num = len(Phi)
+    x = np.arange(1, total_num + 1)
+    axes[1,0].plot(x, Phi, linewidth=2, color='red', label=r'$\phi$')
+    axes[1,0].plot(x, opts['theta']*np.ones(total_num), linewidth=2, linestyle='--',
+                            color='blue', label=r'$\theta_x$')
+    axes[1,0].plot(x, np.abs(opts['theta']*np.ones(total_num)-Phi), linewidth=2, linestyle=':',
+                            color='green', label=r'$|\phi-\theta_x|$')
+    axes[1,0].grid(axis='y')
+    axes[1,0].set_yticks(np.linspace(0.,pi,7))
+    axes[1,0].set_yticklabels(['0', r'$\frac{\pi}{6}$', r'$\frac{\pi}{3}$',
+                            r'$\frac{\pi}{2}$', r'$\frac{2\pi}{3}$',
+                            r'$\frac{5\pi}{6}$', r'$\pi$'])
+    axes[1,0].legend(loc='best')
+    axes[1,0].set_title(r'$\Phi$')
 
     ### D
     array_D = np.array(D).reshape((-1,2))
-    axes[4].plot(x, array_D[:,0], linewidth=2, color='red', label=r'$\alpha$')
-    axes[4].plot(x, array_D[:,1], linewidth=2, color='blue', label=r'$\beta$')
-    axes[4].grid(axis='y')
-    axes[4].legend(loc='best')
-    axes[4].set_title('Model params')
+    axes[1,1].plot(x, array_D[:,0], linewidth=2, color='red', label=r'$\alpha$')
+    axes[1,1].plot(x, array_D[:,1], linewidth=2, color='blue', label=r'$\beta$')
+    axes[1,1].grid(axis='y')
+    axes[1,1].legend(loc='best')
+    axes[1,1].set_title('Model params')
+
+    ### The score heatmap
+    axes[2,0].imshow(heatmap, cmap='hot_r', interpolation='nearest')
+    axes[2,0].set_title('Score heatmap')
+    fig.colorbar(axes[2,0].imshow(heatmap, cmap='hot_r', interpolation='nearest'), ax=axes[2,0], shrink=0.75, fraction=0.08) #, format=format[dataset])
+
+    ### The transformed inputs if needed
+    if opts['model']=='nonaffine':
+        img = zip([inputs, transformed],
+                    [('red', 10, 'inputs', .8),
+                    (('blue', 12, 'transformed', 1.))])
+        for xy, style in img:
+            x = xy[:,0]
+            y = xy[:,1]
+            axes[2,1].scatter(x, y, c=style[0], s=style[1], label=style[2], alpha=style[3])
+            # x_argsort = np.argsort(x)
+            # x_sorted = x[x_argsort]
+            # y_sorted = y[x_argsort]
+            # deg=2
+            # p = np.polyfit(x_sorted,y_sorted,deg)
+            # reg = np.zeros(x_sorted.shape)
+            # for i in range(deg+1):
+            #     reg += p[i]*x_sorted**(deg-i)
+            # axes[2,1].plot(x_sorted, reg, c=style[0], alpha=0.4)
+        axes[2,1].set_xticks([])
+        axes[2,1].set_yticks([])
+        axes[2,1].legend(loc='best')
+        axes[2,1].set_title('Non affine transformation')
 
     ### Saving plots
     # Plot
