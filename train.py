@@ -183,7 +183,7 @@ class Run(object):
                 Losses.append(losses)
                 # model params
                 psi, d = self.sess.run([self.phi, self.d], feed_dict={})
-                Psi.append(psi[0])
+                Psi.append(psi[0]%pi)
                 D.append(d)
                 # testing loss
                 losses, scores_anomalies = np.zeros(4), np.zeros(2)
@@ -248,8 +248,8 @@ class Run(object):
 
             if it % self.opts['plot_every'] == 0:
                 # score fct heatmap
-                xs = np.linspace(-10, 10, 200, endpoint=True)
-                ys = np.linspace(-10, 10, 200, endpoint=True)
+                xs = np.linspace(-100, 100, 200, endpoint=True)
+                ys = np.linspace(-100, 100, 200, endpoint=True)
                 xv, yv = np.meshgrid(xs,ys)
                 grid = np.stack((xv,yv),axis=-1)
                 grid = grid.reshape([-1,2])

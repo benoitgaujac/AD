@@ -127,7 +127,10 @@ def main():
     out_dir = os.path.join(results_dir, opts['model'])
     if not tf.io.gfile.isdir(out_dir):
         utils.create_dir(out_dir)
-    opts['out_dir'] = os.path.join(out_dir, FLAGS.out_dir)
+    out_dir = os.path.join(out_dir, FLAGS.out_dir)
+    if not tf.io.gfile.isdir(out_dir):
+        utils.create_dir(out_dir)
+    opts['out_dir'] = os.path.join(out_dir, 'alpha_{}'.format(opts['d_reg_value']))
     if not tf.io.gfile.isdir(opts['out_dir']):
         utils.create_dir(opts['out_dir'])
     if FLAGS.res_dir:
@@ -154,7 +157,7 @@ def main():
     opts['it_num'] = FLAGS.num_it
     opts['batch_size'] = FLAGS.batch_size
     opts['lr'] = FLAGS.lr
-    opts['plot_every'] = 500 #int(opts['print_every'] / 2.) + 1
+    opts['plot_every'] = 1000 #int(opts['print_every'] / 2.) + 1
     opts['evaluate_every'] = int(opts['plot_every'] / 10.) #int(opts['print_every'] / 2.) + 1
     opts['save_every'] = 10000000000
     opts['save_final'] = FLAGS.save_model
