@@ -61,16 +61,16 @@ config['clip_w_reg'] = True
 config['clip_w_reg_value'] = 100.
 
 # - NN set up
-config['init_std'] = 0.0099999
 config['init_bias'] = 0.0
 config['w_init'] = 'glorot_uniform' #normal, he, glorot, glorot_he, glorot_uniform, ('uniform', range)
+config['w_init_std'] = 0.0099999
 config['d_init'] = 'normal' #normal, he, glorot, glorot_he, glorot_uniform, ('uniform', range)
+config['d_init_std'] = 0.00099999
 config['mlp_init'] = 'glorot_uniform' #normal, he, glorot, glorot_he, glorot_uniform, ('uniform', range)
 config['conv_init'] = 'glorot_uniform' #he, glorot, normilized_glorot, truncated_norm
 config['nonaffine_nlayers'] = 2
 config['nonaffine_init'] = 'glorot_uniform' #normal, he, glorot, glorot_he, glorot_uniform, ('uniform', range)
 config['nonaffine_init_std'] = 0.0099999
-config['nonaffine_init_bias'] = 0.0
 config['nonaffine_non_linear'] = 'tanh'
 config['nonaffine_alpha'] = 1.
 

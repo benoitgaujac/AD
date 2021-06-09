@@ -40,7 +40,7 @@ class Model(object):
                             nlayers=self.opts['nonaffine_nlayers'],
                             init=self.opts['nonaffine_init'],
                             stddev=self.opts['nonaffine_init_std'],
-                            bias=self.opts['nonaffine_init_bias'],
+                            bias=self.opts['init_bias'],
                             nonlinear=self.opts['nonaffine_non_linear'],
                             alpha=self.opts['nonaffine_alpha'],
                             scope='non_affine', reuse=reuse)

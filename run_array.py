@@ -76,7 +76,6 @@ def main():
         opts['use_anomalous'] = FLAGS.anomalous
 
     # Exp setup
-    """
     # multi configs of training w, D, constrained D
     exp = list(itertools.product([False,],
                                 [False,],
@@ -98,7 +97,6 @@ def main():
     else:
         opts['gamma'] = 0.
     """
-    """
     # Different alpha reg and lambda combination
     exp = list(itertools.product([0.1, 1., 10.],
                                 [0.1, 1., 10.]))
@@ -114,11 +112,13 @@ def main():
     opts['train_d'] = FLAGS.train_d
     opts['d_const'] = FLAGS.d_const
     """
+    """
     # Different scaling factor for non affine model
     exp = [0.1, 1., 10.]
     # setting exp id
     exp_id = (FLAGS.exp_id-1) % len(exp)
     opts['nonaffine_alpha'] = exp[exp_id]
+    """
 
     # Model set up
     opts['model'] = FLAGS.model
@@ -131,18 +131,17 @@ def main():
         results_dir = 'results'
     if not tf.io.gfile.isdir(results_dir):
         utils.create_dir(results_dir)
-    out_dir = os.path.join(results_dir, opts['model'])
+    model_dir = os.path.join(results_dir, opts['model'])
+    if not tf.io.gfile.isdir(model_dir):
+        utils.create_dir(model_dir)
+    out_dir = os.path.join(model_dir, FLAGS.out_dir)
     if not tf.io.gfile.isdir(out_dir):
         utils.create_dir(out_dir)
-    out_dir = os.path.join(out_dir, FLAGS.out_dir)
-    if not tf.io.gfile.isdir(out_dir):
-        utils.create_dir(out_dir)
-    opts['out_dir'] = os.path.join(out_dir, 'na_alpha{}'.format(opts['nonaffine_alpha']))
+    opts['out_dir'] = out_dir
+    # opts['out_dir'] = os.path.join(out_dir, 'alpha{}'.format(opts['d_reg_value']))
+    # opts['out_dir'] = os.path.join(out_dir, 'na_alpha{}'.format(opts['nonaffine_alpha']))
     if not tf.io.gfile.isdir(opts['out_dir']):
         utils.create_dir(opts['out_dir'])
-    # opts['out_dir'] = os.path.join(out_dir, 'alpha{}'.format(opts['d_reg_value']))
-    # if not tf.io.gfile.isdir(opts['out_dir']):
-    #     utils.create_dir(opts['out_dir'])
     if FLAGS.res_dir:
         exp_name = FLAGS.res_dir + '_'
     else:

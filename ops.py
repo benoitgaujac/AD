@@ -6,7 +6,7 @@ import pdb
 
 def init_w(opts, scope):
     init = opts['w_init']
-    stddev = opts['init_std']
+    stddev = opts['w_init_std']
     with tf.variable_scope(scope):
         if init == 'normal':
             W = tf.get_variable(
@@ -36,12 +36,12 @@ def init_w(opts, scope):
                 'W', [1, 2], tf.float32,
                 tf.random_uniform_initializer(minval=-1., maxval=1))
         else:
-            raise Exception('Invalid %s mlp initialization!' % opts['mlp_init'])
+            raise Exception('Invalid %s mlp initialization!' % init)
         return W
 
 def init_diagonal(opts, scope):
     init = opts['d_init']
-    stddev = opts['init_std']
+    stddev = opts['d_init_std']
     const = opts['d_const']
     if const:
         shape = [1,]
