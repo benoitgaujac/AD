@@ -114,7 +114,7 @@ def main():
     """
     # Different scaling factor for non affine model
     exp = list(itertools.product([1, 2, 3, 4, 5],
-                                [1., 10., 100.]))
+                                [0.1,]))
     # setting exp id
     exp_id = (FLAGS.exp_id-1) % len(exp)
     opts['nonaffine_nlayers'] = exp[exp_id][0]
