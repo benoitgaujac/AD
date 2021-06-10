@@ -72,7 +72,8 @@ config['nonaffine_nlayers'] = 2
 config['nonaffine_init'] = 'glorot_uniform' #normal, he, glorot, glorot_he, glorot_uniform, ('uniform', range)
 config['nonaffine_init_std'] = 0.0099999
 config['nonaffine_non_linear'] = 'tanh'
-config['nonaffine_alpha'] = 1.
+config['nonaffine_eta1'] = 1.
+config['nonaffine_eta2'] = 1.
 
 ### Line config
 config_line = config.copy()

@@ -5,12 +5,12 @@
 #$ -wd /home/bgaujac/AD
 
 #$ -l gpu=True
-#$ -l tmem=1G
-#$ -l h_rt=2:30:00
+#$ -l tmem=2G
+#$ -l h_rt=5:00:00
 
-#$ -t 1-14
+#$ -t 1-45
 
-#$ -N lineaffine
+#$ -N quadnonaffine
 
 source /share/apps/examples/source_files/python/python-3.6.4.source
 source /share/apps/examples/source_files/cuda/cuda-10.0.source
@@ -24,7 +24,7 @@ source /share/apps/examples/source_files/cuda/cuda-10.0.source
 
 ### affine
 ## linear
-python3 run_array.py --save_model --num_it 50000 --out_dir line_affine --scr_nonlin linear --train_w --exp_id $SGE_TASK_ID
+# python3 run_array.py --save_model --num_it 50000 --out_dir line_affine --scr_nonlin linear --train_w --exp_id $SGE_TASK_ID
 ## quadratic
 # python3 run_array.py --dataset quadratic --save_model --num_it 50000 --out_dir quadratic_affine --scr_nonlin linear --train_w --exp_id $SGE_TASK_ID
 
@@ -32,7 +32,7 @@ python3 run_array.py --save_model --num_it 50000 --out_dir line_affine --scr_non
 ##linear
 # python3 run_array.py --model nonaffine --save_model --num_it 50000 --out_dir line_nonaffine --scr_nonlin linear --train_w --exp_id $SGE_TASK_ID
 # quadratic
-# python3 run_array.py --model nonaffine --dataset quadratic --save_model --num_it 50000 --out_dir quadratic_nonaffine --scr_nonlin linear --train_w --exp_id $SGE_TASK_ID
+python3 run_array.py --model nonaffine --dataset quadratic --save_model --num_it 50000 --out_dir quadratic_nonaffine --scr_nonlin linear --train_w --exp_id $SGE_TASK_ID
 
 # testing
 # python3 run_test.py --data_dir ../data --dataset mnist --out_dir mnist_zdim2_econv_dconv --full_cov_mat --net_archi conv_per_mix_econv_dconv --mode plot --zdim 2 --weights_file trained-VAE-final-200000 --model VAE --res_dir res_1_2021_03_31_10_03

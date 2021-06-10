@@ -42,7 +42,8 @@ class Model(object):
                             stddev=self.opts['nonaffine_init_std'],
                             bias=self.opts['init_bias'],
                             nonlinear=self.opts['nonaffine_non_linear'],
-                            alpha=self.opts['nonaffine_alpha'],
+                            eta1=self.opts['nonaffine_eta1'],
+                            eta2=self.opts['nonaffine_eta2'],
                             scope='non_affine', reuse=reuse)
 
         return outputs

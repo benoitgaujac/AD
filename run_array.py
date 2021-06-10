@@ -76,7 +76,7 @@ def main():
         opts['use_anomalous'] = FLAGS.anomalous
 
     # Exp setup
-    # multi configs of training w, D, constrained D
+    """    # multi configs of training w, D, constrained D
     exp = list(itertools.product([False,],
                                 [False,],
                                 [False,],
@@ -97,7 +97,7 @@ def main():
     else:
         opts['gamma'] = 0.
     """
-    # Different alpha reg and lambda combination
+    """ # Different alpha reg and lambda combination
     exp = list(itertools.product([0.1, 1., 10.],
                                 [0.1, 1., 10.]))
     # setting exp id
@@ -112,13 +112,13 @@ def main():
     opts['train_d'] = FLAGS.train_d
     opts['d_const'] = FLAGS.d_const
     """
-    """
     # Different scaling factor for non affine model
-    exp = [0.1, 1., 10.]
+    exp = list(itertools.product([1, 2, 3, 4, 5],
+                                [1., 10., 100.]))
     # setting exp id
     exp_id = (FLAGS.exp_id-1) % len(exp)
-    opts['nonaffine_alpha'] = exp[exp_id]
-    """
+    opts['nonaffine_nlayers'] = exp[exp_id][0]
+    opts['nonaffine_eta1'] = exp[exp_id][1]
 
     # Model set up
     opts['model'] = FLAGS.model
@@ -137,9 +137,10 @@ def main():
     out_dir = os.path.join(model_dir, FLAGS.out_dir)
     if not tf.io.gfile.isdir(out_dir):
         utils.create_dir(out_dir)
-    opts['out_dir'] = out_dir
-    # opts['out_dir'] = os.path.join(out_dir, 'alpha{}'.format(opts['d_reg_value']))
-    # opts['out_dir'] = os.path.join(out_dir, 'na_alpha{}'.format(opts['nonaffine_alpha']))
+    # opts['out_dir'] = out_dir
+    # opts['out_dir'] = os.path.join(out_dir, 'alpha_{}'.format(opts['d_reg_value']))
+    # opts['out_dir'] = os.path.join(out_dir, 'na_alpha_{}'.format(opts['nonaffine_alpha']))
+    opts['out_dir'] = os.path.join(out_dir, 'nlayers_{}_eta1_{}'.format(opts['nonaffine_nlayers'], opts['nonaffine_eta1']))
     if not tf.io.gfile.isdir(opts['out_dir']):
         utils.create_dir(opts['out_dir'])
     if FLAGS.res_dir:
@@ -167,7 +168,7 @@ def main():
     opts['batch_size'] = FLAGS.batch_size
     opts['lr'] = FLAGS.lr
     opts['plot_every'] = 5000 #int(opts['print_every'] / 2.) + 1
-    opts['evaluate_every'] = int(opts['plot_every'] / 10.) #int(opts['print_every'] / 2.) + 1
+    opts['evaluate_every'] = int(opts['plot_every'] / 10.)
     opts['save_every'] = 10000000000
     opts['save_final'] = FLAGS.save_model
     opts['save_train_data'] = FLAGS.save_data
