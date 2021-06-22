@@ -133,7 +133,7 @@ def plot_train(opts, trloss, teloss, scores, heatmap, inputs, transformed, Phi, 
     fig.colorbar(axes[2,0].imshow(heatmap, cmap='hot_r', interpolation='nearest'), ax=axes[2,0], shrink=0.75, fraction=0.08) #, format=format[dataset])
 
     ### The transformed inputs if needed
-    if opts['model']=='nonaffine':
+    if opts['flow']!='identity':
         img = zip([inputs, transformed],
                     [('red', 10, 'inputs', .8),
                     (('blue', 12, 'transformed', 1.))])
@@ -153,7 +153,7 @@ def plot_train(opts, trloss, teloss, scores, heatmap, inputs, transformed, Phi, 
         axes[2,1].set_xticks([])
         axes[2,1].set_yticks([])
         axes[2,1].legend(loc='best')
-        axes[2,1].set_title('Non affine transformation')
+        axes[2,1].set_title('Flow transformation')
 
     ### Saving plots
     # Plot

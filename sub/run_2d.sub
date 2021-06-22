@@ -1,0 +1,35 @@
+#!/bin/bash
+
+#$ -S /bin/bash
+
+#$ -wd /home/bgaujac/AD
+
+#$ -l gpu=True
+#$ -l tmem=2G
+#$ -l h_rt=5:00:00
+
+#$ -t 1-5
+
+#$ -N planar
+
+source /share/apps/examples/source_files/python/python-3.6.4.source
+source /share/apps/examples/source_files/cuda/cuda-10.0.source
+
+# test local
+# python3 run.py --save_model --flow planar --dataset quadratic --num_it 50000 --out_dir planar_test --nsteps 2
+# python3 run.py --save_model --save_data --num_it 50000 --lmbda .0 --lr 0.01 --out_dir line_affine_test --train_w --scr_nonlin linear
+# python3 run.py --save_model --save_data --num_it 50000 --lr 0.01 --out_dir line_cubic_w --scr_nonlin cubic
+# python3 run.py --save_model --save_data --num_it 50000 --lr 0.01 --out_dir line_sinh_w --scr_nonlin sinh
+
+### linear dataset
+# python3 run_array.py --save_model --num_it 50000 --out_dir identity --scr_nonlin linear --exp_id $SGE_TASK_ID
+# python3 run_array.py --flow mlp --save_model --num_it 50000 --out_dir mlp --scr_nonlin linear --exp_id $SGE_TASK_ID
+# python3 run_array.py --flow planar --save_model --num_it 50000 --out_dir planar --scr_nonlin linear --exp_id $SGE_TASK_ID
+
+### quadratic dataset
+# python3 run_array.py --dataset quadratic --save_model --num_it 50000 --out_dir identity --exp_id $SGE_TASK_ID
+# python3 run_array.py --flow mlp --dataset quadratic --save_model --num_it 50000 --out_dir mlp --exp_id $SGE_TASK_ID
+python3 run_array.py --flow planar --dataset quadratic --save_model --num_it 50000 --out_dir planar --exp_id $SGE_TASK_ID
+
+# testing
+# python3 run_test.py --data_dir ../data --dataset mnist --out_dir mnist_zdim10_econv_dconv --net_archi conv_per_mix_econv_dconv --mode plot --zdim 10 --weights_file trained-WAE-final-200000 --model WAE --res_dir res_750_2021_03_25_10_50 --samples_near_modes

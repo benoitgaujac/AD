@@ -30,12 +30,6 @@ class Run(object):
 
         # - Instantiate Model
         self.model = models.Model(self.opts)
-        # if self.opts['model']=='affine':
-        #     self.model = models.model(self.opts)
-        # elif self.opts['model']=='nonaffine':
-        #     self.model = NonAffine.Affine(self.opts)
-        # else:
-        #     raise ValueError('Unknown {} model' % self.opts['model'])
 
         # - Data/label
         x, y = self.data.next_element
@@ -107,19 +101,21 @@ class Run(object):
         lr = self.opts['lr']
         opt = self.optimizer(lr, self.lr_decay)
         vars = []
+        vars += tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES,
+                                    scope='score/phi')
+        vars += tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES,
+                                    scope='flow')
         if self.opts['train_w']:
             vars += tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES,
                                         scope='score/W')
         if self.opts['train_d']:
             vars += tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES,
                                         scope='score/D')
-        vars += tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES,
-                                    scope='score/phi')
         self.opt = opt.minimize(loss=self.objective, var_list=vars)
 
 
     def train(self, WEIGHTS_FILE=None):
-        logging.error('\nTraining {}'.format(self.opts['model']))
+        logging.error('\nTraining {} flow'.format(self.opts['flow']))
         exp_dir = self.opts['exp_dir']
 
         # - Set up for training
@@ -264,7 +260,7 @@ class Run(object):
                                     feed_dict=feed_dict)
                 heatmap = heatmap.reshape([200,200])
                 # non affine transformation
-                if self.opts['model']=='nonaffine':
+                if self.opts['flow']!='identity':
                     batch_inputs = self.data._sample_observation(
                                     200,
                                     self.opts['dataset'],
@@ -295,7 +291,7 @@ class Run(object):
         if self.opts['save_final'] and it > 0:
             self.saver.save(self.sess, os.path.join(exp_dir,
                                                 'checkpoints',
-                                                'trained-{}-final'.format(self.opts['model'])),
+                                                'trained-{}-final'.format(self.opts['flow'])),
                                                 global_step=it)
 
         # - Finale losses & scores

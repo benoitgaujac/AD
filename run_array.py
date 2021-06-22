@@ -2,15 +2,17 @@ import os
 from datetime import datetime
 import logging
 import argparse
+from math import pi
+import tensorflow.compat.v1 as tf
+tf.disable_eager_execution()
+print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
+import numpy as np
+
 import configs
 from train import Run
 from datahandler import DataHandler
 import utils
-import itertools
 
-import tensorflow.compat.v1 as tf
-tf.disable_eager_execution()
-print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
 
 import pdb
 
@@ -28,20 +30,20 @@ parser.add_argument("--batch_size", type=int, default=100,
                     help='batch size')
 parser.add_argument("--lr", type=float, default=0.01,
                     help='learning rate size')
-# exp setup
-parser.add_argument("--exp_id", type=int,
-                    help='exp. id')
 # path setup
 parser.add_argument("--res_dir", type=str,
                     help='root directory for res')
 parser.add_argument("--out_dir", type=str, default='code_outputs',
                     help='dir in which experiment outputs are saved')
+# exp setup
+parser.add_argument("--exp_id", type=int,
+                    help='exp. id')
 # model set up
-parser.add_argument("--model", default='affine',
-                    help='score model to train [affine/nonaffine]')
+parser.add_argument("--flow", default='identity',
+                    help='score flow to use')
 parser.add_argument("--scr_nonlin", default='linear',
                     help='non linear activation for score fct')
-parser.add_argument("--train_w", action='store_false', default=True,
+parser.add_argument("--train_w", action='store_true', default=False,
                     help='whether to learn linear proj')
 parser.add_argument("--gamma", type=float, default=0.,
                     help='weight regulation')
@@ -113,16 +115,25 @@ def main():
     opts['d_const'] = FLAGS.d_const
     """
     # Different scaling factor for non affine model
-    exp = list(itertools.product([1, 2, 3, 4, 5],
-                                [0.1,]))
+    exp = [1,2,3,5,10]
     # setting exp id
     exp_id = (FLAGS.exp_id-1) % len(exp)
-    opts['nonaffine_nlayers'] = exp[exp_id][0]
-    opts['nonaffine_eta1'] = exp[exp_id][1]
+    opts['nsteps'] = exp[exp_id]
 
     # Model set up
-    opts['model'] = FLAGS.model
-    opts['score_non_linear'] = FLAGS.scr_nonlin
+    opts['flow'] = FLAGS.flow
+    opts['score_nonlinear'] = FLAGS.scr_nonlin
+    opts['train_w'] = FLAGS.train_w
+    if opts['train_w']:
+        opts['gamma'] = FLAGS.gamma
+    else:
+        opts['gamma'] = 0.
+    opts['train_d'] = FLAGS.train_d
+    if opts['train_d']:
+        opts['lmbda'] = FLAGS.lmbda
+    else:
+        opts['lmbda'] = 0.
+    opts['d_const'] = FLAGS.d_const
 
     # Create directories
     if FLAGS.res_dir:
@@ -131,16 +142,14 @@ def main():
         results_dir = 'results'
     if not tf.io.gfile.isdir(results_dir):
         utils.create_dir(results_dir)
-    model_dir = os.path.join(results_dir, opts['model'])
-    if not tf.io.gfile.isdir(model_dir):
-        utils.create_dir(model_dir)
-    out_dir = os.path.join(model_dir, FLAGS.out_dir)
+    data_dir = os.path.join(results_dir, opts['dataset'])
+    if not tf.io.gfile.isdir(data_dir):
+        utils.create_dir(data_dir)
+    out_dir = os.path.join(data_dir, FLAGS.out_dir)
     if not tf.io.gfile.isdir(out_dir):
         utils.create_dir(out_dir)
     # opts['out_dir'] = out_dir
-    # opts['out_dir'] = os.path.join(out_dir, 'alpha_{}'.format(opts['d_reg_value']))
-    # opts['out_dir'] = os.path.join(out_dir, 'na_alpha_{}'.format(opts['nonaffine_alpha']))
-    opts['out_dir'] = os.path.join(out_dir, 'nlayers_{}_eta1_{}'.format(opts['nonaffine_nlayers'], opts['nonaffine_eta1']))
+    opts['out_dir'] = os.path.join(out_dir, 'nsteps{}'.format(opts['nsteps']))
     if not tf.io.gfile.isdir(opts['out_dir']):
         utils.create_dir(opts['out_dir'])
     if FLAGS.res_dir:
