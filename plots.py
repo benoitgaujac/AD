@@ -6,6 +6,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.colors
+from matplotlib.ticker import FormatStrFormatter
 
 import utils
 
@@ -156,8 +157,12 @@ def plot_train(opts, trloss, teloss, scores, heatmap, inputs, transformed, Phi, 
             # for i in range(deg+1):
             #     reg += p[i]*x_sorted**(deg-i)
             # axes[2,1].plot(x_sorted, reg, c=style[0], alpha=0.4)
-        axes[2,1].set_xticks([])
-        axes[2,1].set_yticks([])
+        # ticks = np.linspace(-2,2,11)-1
+        # # ticks[0] = 0
+        # axes[2,1].set_yticks(ticks)
+        # axes[2,1].set_yticklabels(np.linspace(-2,2,11))
+        # axes[2,1].set_xticks(ticks)
+        # axes[2,1].set_xticklabels(np.linspace(-2,2,11))
         axes[2,1].legend(loc='best')
         axes[2,1].set_title('Flow transformation')
 

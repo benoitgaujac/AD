@@ -68,7 +68,7 @@ class Model(object):
         if self.opts['train_w']:
             score = tf.linalg.matmul(tf.expand_dims(W, 0), score)
         else:
-            score = tf.reduce_sum(tf.square(score), axis=1)
+            score = tf.sqrt(tf.reduce_sum(tf.square(score), axis=1))
         if self.opts['clip_score']:
             score = tf.clip_by_value(score, -self.opts['clip_score_value'],
                                 self.opts['clip_score_value'])

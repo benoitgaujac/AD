@@ -28,7 +28,7 @@ parser.add_argument("--num_it", type=int, default=10000,
                     help='iteration number')
 parser.add_argument("--batch_size", type=int, default=100,
                     help='batch size')
-parser.add_argument("--lr", type=float, default=0.01,
+parser.add_argument("--lr", type=float, default=0.001,
                     help='learning rate size')
 # path setup
 parser.add_argument("--res_dir", type=str,

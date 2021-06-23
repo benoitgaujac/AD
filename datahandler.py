@@ -45,7 +45,10 @@ def _nominal_generator(dataset):
         x = np.array((r*cos(theta), r*sin(theta)))
     elif dataset=='quadratic':
         z = np.random.uniform(low=-1, high=1, size=None)
-        x = np.array((z, z*z))
+        x = np.array((z, configs.config_quadratic['a']*z*z + configs.config_quadratic['b']))
+        rot = np.stack([cos(configs.config_quadratic['theta']), -sin(configs.config_quadratic['theta']),
+                        sin(configs.config_quadratic['theta']), cos(configs.config_quadratic['theta'])], 0).reshape([2,2])
+        x = np.matmul(rot, x)
     else:
         raise ValueError('Unknown {} dataset' % dataset)
     return x

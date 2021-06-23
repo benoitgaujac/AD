@@ -27,3 +27,13 @@ def non_linear(inputs, type, eta1=1., eta2=1.):
         return eta1*inputs
     else:
         raise ValueError('Unknown {} non linear activtion' % type)
+
+def checkerboard(height, width, reverse=False, dtype=tf.float32):
+    checkerboard = [[((i % 2) + j) % 2 for j in range(width)] for i in range(height)]
+    checkerboard = tf.convert_to_tensor(checkerboard, dtype = dtype)
+    if reverse:
+        checkerboard = 1 - checkerboard
+
+    checkerboard = tf.reshape(checkerboard, (1,height,width,1))
+
+    return tf.cast(checkerboard, dtype=dtype)        

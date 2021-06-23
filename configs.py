@@ -17,9 +17,6 @@ config['hm_lim'] = 10
 config['train_dataset_size'] = -1
 config['use_anomalous'] = False
 seed = 1234
-# np.random.seed(seed)
-config['theta'] = np.random.uniform(0,pi)
-np.random.seed()
 config['flow'] = 'planar' # identy, mlp, planar, realNVP, glow
 config['use_trained'] = False # train from pre-trained model
 
@@ -65,7 +62,7 @@ config['clip_w_reg_value'] = 100.
 config['w_init'] = 'glorot_uniform' #normal, he, glorot, glorot_he, glorot_uniform, ('uniform', range)
 config['w_init_std'] = 0.0099999
 config['d_init'] = 'normal' #normal, he, glorot, glorot_he, glorot_uniform, ('uniform', range)
-config['d_init_std'] = 0.00099999
+config['d_init_std'] = 0.0099999
 
 # - NN set up
 config['mlp_init'] = 'glorot_uniform' #normal, he, glorot, glorot_he, glorot_uniform, ('uniform', range)
@@ -83,7 +80,17 @@ config['mlp_eta2'] = 1.
 ### Line config
 config_line = config.copy()
 config_line['dataset'] = 'line'
+# np.random.seed(seed)
+config_line['theta'] = np.random.uniform(0,pi)
+# np.random.seed()
+
 
 ### Quadratic config
 config_quadratic = config.copy()
 config_quadratic['dataset'] = 'quadratic'
+# sampling the fix params of the quadratic nominal
+# np.random.seed(seed)
+config_quadratic['a'] = np.random.uniform(low=-1, high=1, size=None)
+config_quadratic['b'] = np.random.uniform(low=-1, high=1, size=None)
+config_quadratic['theta'] = np.random.uniform(high=2*pi, size=None)
+# np.random.seed(seed)
