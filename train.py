@@ -248,8 +248,8 @@ class Run(object):
 
             if it % self.opts['plot_every'] == 0:
                 # score fct heatmap
-                xs = np.linspace(-100, 100, 200, endpoint=True)
-                ys = np.linspace(-100, 100, 200, endpoint=True)
+                xs = np.linspace(-self.opts['hm_lim'], self.opts['hm_lim'], 200, endpoint=True)
+                ys = np.linspace(-10, 10, 200, endpoint=True)
                 xv, yv = np.meshgrid(xs,ys)
                 grid = np.stack((xv,yv),axis=-1)
                 grid = grid.reshape([-1,2])

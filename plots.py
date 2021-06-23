@@ -129,6 +129,12 @@ def plot_train(opts, trloss, teloss, scores, heatmap, inputs, transformed, Phi, 
 
     ### The score heatmap
     axes[2,0].imshow(heatmap, cmap='hot_r', interpolation='nearest')
+    ticks = np.linspace(0,200,11)-1
+    ticks[0] = 0
+    axes[2,0].set_yticks(ticks)
+    axes[2,0].set_yticklabels(np.linspace(-opts['hm_lim'],opts['hm_lim'],11))
+    axes[2,0].set_xticks(ticks)
+    axes[2,0].set_xticklabels(np.linspace(-opts['hm_lim'],opts['hm_lim'],11))
     axes[2,0].set_title('Score heatmap')
     fig.colorbar(axes[2,0].imshow(heatmap, cmap='hot_r', interpolation='nearest'), ax=axes[2,0], shrink=0.75, fraction=0.08) #, format=format[dataset])
 

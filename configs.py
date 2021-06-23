@@ -11,6 +11,7 @@ config['save_final'] = True
 config['save_train_data'] = True
 config['evaluate_every'] = 100
 config['out_dir'] = 'code_outputs'
+config['hm_lim'] = 10
 
 # - Experiment set up
 config['train_dataset_size'] = -1

@@ -8,7 +8,7 @@
 #$ -l tmem=2G
 #$ -l h_rt=5:00:00
 
-#$ -t 1-5
+#$ -t 1-15
 
 #$ -N planar
 
@@ -27,9 +27,9 @@ source /share/apps/examples/source_files/cuda/cuda-10.0.source
 # python3 run_array.py --flow planar --save_model --num_it 50000 --out_dir planar --scr_nonlin linear --exp_id $SGE_TASK_ID
 
 ### quadratic dataset
-# python3 run_array.py --dataset quadratic --save_model --num_it 50000 --out_dir identity --exp_id $SGE_TASK_ID
-# python3 run_array.py --flow mlp --dataset quadratic --save_model --num_it 50000 --out_dir mlp --exp_id $SGE_TASK_ID
-python3 run_array.py --flow planar --dataset quadratic --save_model --num_it 50000 --out_dir planar --exp_id $SGE_TASK_ID
+# python3 run_array.py --dataset quadratic --save_model --num_it 100000 --out_dir identity --exp_id $SGE_TASK_ID
+# python3 run_array.py --flow mlp --dataset quadratic --save_model --num_it 100000 --out_dir mlp --exp_id $SGE_TASK_ID
+python3 run_array.py --flow planar --dataset quadratic --save_model --num_it 100000 --out_dir planar --exp_id $SGE_TASK_ID
 
 # testing
 # python3 run_test.py --data_dir ../data --dataset mnist --out_dir mnist_zdim10_econv_dconv --net_archi conv_per_mix_econv_dconv --mode plot --zdim 10 --weights_file trained-WAE-final-200000 --model WAE --res_dir res_750_2021_03_25_10_50 --samples_near_modes
