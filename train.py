@@ -261,11 +261,11 @@ class Run(object):
                                     feed_dict=feed_dict)
                 heatmap = heatmap.reshape([101,101])
                 # non affine transformation
+                batch_inputs = self.data._sample_observation(
+                                200,
+                                self.opts['dataset'],
+                                True)
                 if self.opts['flow']!='identity':
-                    batch_inputs = self.data._sample_observation(
-                                    200,
-                                    self.opts['dataset'],
-                                    True)
                     feed_dict={self.x: batch_inputs[0],
                                     self.gamma: self.opts['gamma'],
                                     self.lmbda: self.opts['lmbda']}

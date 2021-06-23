@@ -140,6 +140,7 @@ def plot_train(opts, trloss, teloss, scores, heatmap, inputs, transformed, Phi, 
     fig.colorbar(axes[2,0].imshow(heatmap, cmap='hot_r', interpolation='nearest'), ax=axes[2,0], shrink=0.75, fraction=0.08) #, format=format[dataset])
 
     ### The transformed inputs if needed
+    m, M = 10, -10
     if opts['flow']!='identity':
         img = zip([inputs, transformed],
                     [('red', 10, 'inputs', .8),
@@ -148,23 +149,23 @@ def plot_train(opts, trloss, teloss, scores, heatmap, inputs, transformed, Phi, 
             x = xy[:,0]
             y = xy[:,1]
             axes[2,1].scatter(x, y, c=style[0], s=style[1], label=style[2], alpha=style[3])
-            # x_argsort = np.argsort(x)
-            # x_sorted = x[x_argsort]
-            # y_sorted = y[x_argsort]
-            # deg=2
-            # p = np.polyfit(x_sorted,y_sorted,deg)
-            # reg = np.zeros(x_sorted.shape)
-            # for i in range(deg+1):
-            #     reg += p[i]*x_sorted**(deg-i)
-            # axes[2,1].plot(x_sorted, reg, c=style[0], alpha=0.4)
-        # ticks = np.linspace(-2,2,11)-1
-        # # ticks[0] = 0
-        # axes[2,1].set_yticks(ticks)
-        # axes[2,1].set_yticklabels(np.linspace(-2,2,11))
-        # axes[2,1].set_xticks(ticks)
-        # axes[2,1].set_xticklabels(np.linspace(-2,2,11))
-        axes[2,1].legend(loc='best')
-        axes[2,1].set_title('Flow transformation')
+            m = min(m, np.amin(x), np.amin(y))
+            M = max(M, np.amax(x), np.amax(y))
+    else:
+        axes[2,1].scatter(inputs[:,0], inputs[:,1], c='red', s=10, label='inputs')
+        m = min(m, np.amin(inputs[:,0]), np.amin(inputs[:,1]))
+        M = max(M, np.amax(inputs[:,0]), np.amax(inputs[:,1]))
+    lim = max(abs(m),abs(M))
+    ticks = np.linspace(-lim,lim,5)
+    axes[2,1].set_yticks(ticks)
+    axes[2,1].set_yticklabels(np.linspace(-lim,lim,5))
+    axes[2,1].yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+    axes[2,1].set_xticks(ticks)
+    axes[2,1].set_xticklabels(np.linspace(-lim,lim,5))
+    axes[2,1].xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+
+    axes[2,1].legend(loc='best')
+    axes[2,1].set_title('Flow transformation')
 
     ### Saving plots
     # Plot
