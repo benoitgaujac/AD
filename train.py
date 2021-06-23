@@ -248,17 +248,18 @@ class Run(object):
 
             if it % self.opts['plot_every'] == 0:
                 # score fct heatmap
-                xs = np.linspace(-self.opts['hm_lim'], self.opts['hm_lim'], 200, endpoint=True)
-                ys = np.linspace(-10, 10, 200, endpoint=True)
+                xs = np.linspace(-self.opts['hm_lim'], self.opts['hm_lim'], 101, endpoint=True)
+                ys = np.linspace(-self.opts['hm_lim'], self.opts['hm_lim'], 101, endpoint=True)
                 xv, yv = np.meshgrid(xs,ys)
                 grid = np.stack((xv,yv),axis=-1)
+                grid = grid[:,::-1]
                 grid = grid.reshape([-1,2])
                 feed_dict={self.x: grid,
                                     self.gamma: self.opts['gamma'],
                                     self.lmbda: self.opts['lmbda']}
                 heatmap = self.sess.run(self.heatmap_score_anomalies,
                                     feed_dict=feed_dict)
-                heatmap = heatmap.reshape([200,200])
+                heatmap = heatmap.reshape([101,101])
                 # non affine transformation
                 if self.opts['flow']!='identity':
                     batch_inputs = self.data._sample_observation(
