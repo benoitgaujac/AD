@@ -128,17 +128,6 @@ def plot_train(opts, trloss, teloss, scores, heatmap, inputs, transformed, Phi, 
     axes[1,1].legend(loc='best')
     axes[1,1].set_title('Model params')
 
-    ### The score heatmap
-    axes[2,0].imshow(np.log(heatmap), cmap='hot_r', interpolation='nearest')
-    ticks = np.linspace(0,heatmap.shape[0],11)-1
-    ticks[0] = 0
-    axes[2,0].set_yticks(ticks)
-    axes[2,0].set_yticklabels(np.linspace(-opts['hm_lim'],opts['hm_lim'],11)[::-1])
-    axes[2,0].set_xticks(ticks)
-    axes[2,0].set_xticklabels(np.linspace(-opts['hm_lim'],opts['hm_lim'],11))
-    axes[2,0].set_title('logScore heatmap')
-    fig.colorbar(axes[2,0].imshow(heatmap, cmap='hot_r', interpolation='nearest'), ax=axes[2,0], shrink=0.75, fraction=0.08) #, format=format[dataset])
-
     ### The transformed inputs if needed
     m, M = 10, -10
     if opts['flow']!='identity':
@@ -149,12 +138,16 @@ def plot_train(opts, trloss, teloss, scores, heatmap, inputs, transformed, Phi, 
             x = xy[:,0]
             y = xy[:,1]
             axes[2,1].scatter(x, y, c=style[0], s=style[1], label=style[2], alpha=style[3])
-            m = min(m, np.amin(x), np.amin(y))
-            M = max(M, np.amax(x), np.amax(y))
+            # m = min(m, np.amin(x), np.amin(y))
+            # M = max(M, np.amax(x), np.amax(y))
+            m = min(m, np.amin(xy))
+            M = max(M, np.amax(xy))
     else:
         axes[2,1].scatter(inputs[:,0], inputs[:,1], c='red', s=10, label='inputs')
-        m = min(m, np.amin(inputs[:,0]), np.amin(inputs[:,1]))
-        M = max(M, np.amax(inputs[:,0]), np.amax(inputs[:,1]))
+        # m = min(m, np.amin(inputs[:,0]), np.amin(inputs[:,1]))
+        # M = max(M, np.amax(inputs[:,0]), np.amax(inputs[:,1]))
+        m = min(m, np.amin(inputs))
+        M = max(M, np.amax(inputs))
     lim = max(abs(m),abs(M))
     ticks = np.linspace(-lim,lim,5)
     axes[2,1].set_yticks(ticks)
@@ -163,9 +156,21 @@ def plot_train(opts, trloss, teloss, scores, heatmap, inputs, transformed, Phi, 
     axes[2,1].set_xticks(ticks)
     axes[2,1].set_xticklabels(np.linspace(-lim,lim,5))
     axes[2,1].xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-
     axes[2,1].legend(loc='best')
     axes[2,1].set_title('Flow transformation')
+
+    ### The score heatmap
+    axes[2,0].imshow(np.log(heatmap), cmap='hot_r', interpolation='nearest')
+    ticks = np.linspace(0,heatmap.shape[0]-1,5)
+    # pdb.set_trace()
+    axes[2,0].set_yticks(ticks)
+    axes[2,0].set_yticklabels(np.linspace(-1,1,5)[::-1])
+    # axes[2,0].yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+    axes[2,0].set_xticks(ticks)
+    axes[2,0].set_xticklabels(np.linspace(-1,1,5))
+    # axes[2,0].xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+    axes[2,0].set_title('logScore heatmap')
+    fig.colorbar(axes[2,0].imshow(heatmap, cmap='hot_r', interpolation='nearest'), ax=axes[2,0], shrink=0.75, fraction=0.08) #, format=format[dataset])
 
     ### Saving plots
     # Plot

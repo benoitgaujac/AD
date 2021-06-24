@@ -11,7 +11,7 @@ config['save_final'] = True
 config['save_train_data'] = True
 config['evaluate_every'] = 100
 config['out_dir'] = 'code_outputs'
-config['hm_lim'] = 2
+config['hm_lim'] = 1
 
 # - Experiment set up
 config['train_dataset_size'] = -1
@@ -70,12 +70,13 @@ config['conv_init'] = 'glorot_uniform' #he, glorot, normilized_glorot, truncated
 config['init_bias'] = 0.0
 
 # - flows set up
-config['nsteps'] = 1
-config['mlp_init'] = 'glorot_uniform' #normal, he, glorot, glorot_he, glorot_uniform, ('uniform', range)
-config['mlp_init_std'] = 0.0099999
-config['mlp_nonlinear'] = 'tanh'
-config['mlp_eta1'] = 1.
-config['mlp_eta2'] = 1.
+config['mlpflow_nlayers'] = 3
+config['mlpflow_init'] = 'glorot_uniform' #normal, he, glorot, glorot_he, glorot_uniform, ('uniform', range)
+config['mlpflow_init_std'] = 0.0099999
+config['mlpflow_init_bias'] = 0.0
+config['mlpflow_nonlinear'] = 'tanh'
+config['mlpflow_eta1'] = 1.
+config['mlpflow_eta2'] = 1.
 
 ### Line config
 config_line = config.copy()

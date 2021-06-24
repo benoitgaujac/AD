@@ -27,15 +27,15 @@ import pdb
 '''--------------------------------------------- mlp flow --------------------------------------------------------'''
 
 def mlp(opts, inputs, scope=None, reuse=False):
-    outputs = networks.mlp(self.opts, inputs, output_dim=2,
-                    nlayers=self.opts['nsteps'],
-                    init=self.opts['mlp_init'],
-                    stddev=self.opts['mlp_init_std'],
-                    bias=self.opts['init_bias'],
-                    nonlinear=self.opts['mlp_nonlinear'],
-                    eta1=self.opts['mlp_eta1'],
-                    eta2=self.opts['mlp_eta2'],
-                    scope=scope, reuse=reuse)
+    outputs = networks.mlp(opts, inputs, output_dim=2,
+                            nlayers=opts['mlpflow_nlayers'],
+                            init=opts['mlpflow_init'],
+                            stddev=opts['mlpflow_init_std'],
+                            bias=opts['mlpflow_init_bias'],
+                            nonlinear=opts['mlpflow_nonlinear'],
+                            eta1=opts['mlpflow_eta1'],
+                            eta2=opts['mlpflow_eta2'],
+                            scope=scope, reuse=reuse)
 
     return outputs
 

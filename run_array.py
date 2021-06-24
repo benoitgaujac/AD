@@ -115,7 +115,7 @@ def main():
     opts['d_const'] = FLAGS.d_const
     """
     # Different scaling factor for non affine model
-    exp = [1,2,3,4,5]
+    exp = [1,2,3,5]
     # setting exp id
     exp_id = (FLAGS.exp_id-1) % len(exp)
     opts['nsteps'] = exp[exp_id]
@@ -176,7 +176,7 @@ def main():
     opts['it_num'] = FLAGS.num_it
     opts['batch_size'] = FLAGS.batch_size
     opts['lr'] = FLAGS.lr
-    opts['plot_every'] = 5000 #int(opts['print_every'] / 2.) + 1
+    opts['plot_every'] = int(opts['print_every'] / 2.) + 1
     opts['evaluate_every'] = int(opts['plot_every'] / 10.)
     opts['save_every'] = 10000000000
     opts['save_final'] = FLAGS.save_model
