@@ -387,11 +387,10 @@ class Run(object):
             name = 'res_train_final'
             np.savez(os.path.join(save_path, name),
                     loss=np.array(Losses),
-                    loss_test = np.array(Losses_test),
-                    loss_anomalies = np.array(Scores_anomalies),
-                    theta = self.opts['theta'],
-                    psi=np.array(Psi),
-                    d = np.array(D))
+                    loss_test=np.array(Losses_test),
+                    loss_anomalies=np.array(Scores_anomalies),
+                    theta=self.opts['theta'], a=self.opts['a'], b=self.opts['b'],
+                    psi=np.array(Psi), d = np.array(D))
 
 #     def test(self, MODEL_PATH=None, WEIGHTS_FILE=None):
 #         """

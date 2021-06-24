@@ -82,6 +82,8 @@ config['mlpflow_eta2'] = 1.
 config_line = config.copy()
 config_line['dataset'] = 'line'
 # np.random.seed(seed)
+config_line['a'] = 0.
+config_line['b'] = 0.
 config_line['theta'] = np.random.uniform(0,pi)
 # np.random.seed()
 
