@@ -17,6 +17,7 @@ source /share/apps/examples/source_files/cuda/cuda-10.0.source
 
 # test local
 # python3 run.py --save_model --flow planar --dataset quadratic --num_it 50000 --out_dir planar_quadra_test --nsteps 1
+# python3 run.py --save_model --flow planar --dataset cubic --num_it 50000 --out_dir planar_cubic_test --nsteps 1
 # python3 run.py --save_model --flow planar --dataset line --num_it 50000 --out_dir planar_line_test --nsteps 1
 # python3 run.py --save_model --flow identity --dataset line --num_it 50000 --out_dir id_line_test --nsteps 1
 # python3 run.py --save_model --dataset line --num_it 50000 --out_dir id_line_test --nsteps 1
@@ -34,5 +35,10 @@ source /share/apps/examples/source_files/cuda/cuda-10.0.source
 # python3 run_array.py --flow mlp --dataset quadratic --num_it 100000 --out_dir mlp --exp_id $SGE_TASK_ID
 python3 run_array.py --flow planar --dataset quadratic --num_it 100000 --out_dir planar --exp_id $SGE_TASK_ID
 
-# testing
+### cubic dataset
+# python3 run_array.py --dataset cubic --num_it 100000 --out_dir identity --exp_id $SGE_TASK_ID
+# python3 run_array.py --flow mlp --dataset cubic --num_it 100000 --out_dir mlp --exp_id $SGE_TASK_ID
+python3 run_array.py --flow planar --dataset cubic --num_it 100000 --out_dir planar --exp_id $SGE_TASK_ID
+
+### testing
 # python3 run_test.py --data_dir ../data --dataset mnist --out_dir mnist_zdim10_econv_dconv --net_archi conv_per_mix_econv_dconv --mode plot --zdim 10 --weights_file trained-WAE-final-200000 --model WAE --res_dir res_750_2021_03_25_10_50 --samples_near_modes

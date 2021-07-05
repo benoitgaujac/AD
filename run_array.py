@@ -72,6 +72,8 @@ def main():
         opts = configs.config_line
     elif FLAGS.dataset == 'quadratic':
         opts = configs.config_quadratic
+    elif FLAGS.dataset == 'cubic':
+        opts = configs.config_cubic
     else:
         raise ValueError('Unknown {} dataset' % FLAGS.dataset)
     if FLAGS.anomalous:

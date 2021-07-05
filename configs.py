@@ -2,6 +2,11 @@ import copy
 from math import pow, sqrt, pi
 import numpy as np
 
+# Helper to define polynomial params for data
+def init_poly(n):
+    coef = [np.random.uniform(low=1, high=11, size=None)*(2*np.random.randint(0, 2)-1) for _ in range(n+1)]
+    return coef
+
 ### Default common config
 config = {}
 # - Outputs set up
@@ -82,8 +87,9 @@ config['mlpflow_eta2'] = 1.
 config_line = config.copy()
 config_line['dataset'] = 'line'
 # np.random.seed(seed)
-config_line['a'] = 0.
-config_line['b'] = 0.
+config_line['coef'] = init_poly(0)
+# config_line['a'] = 0.
+# config_line['b'] = 0.
 config_line['theta'] = np.random.uniform(0,pi)
 # np.random.seed()
 
@@ -93,7 +99,19 @@ config_quadratic = config.copy()
 config_quadratic['dataset'] = 'quadratic'
 # sampling the fix params of the quadratic nominal
 # np.random.seed(seed)
-config_quadratic['a'] = np.random.uniform(low=-1, high=1, size=None)
-config_quadratic['b'] = np.random.uniform(low=-1, high=1, size=None)
+config_quadratic['coef'] = init_poly(2)
+# config_quadratic['a'] = np.random.uniform(low=-1, high=1, size=None)
+# config_quadratic['b'] = np.random.uniform(low=-1, high=1, size=None)
 config_quadratic['theta'] = np.random.uniform(high=2*pi, size=None)
+# np.random.seed(seed)
+
+### Cubic config
+config_cubic = config.copy()
+config_cubic['dataset'] = 'cubic'
+# sampling the fix params of the quadratic nominal
+# np.random.seed(seed)
+config_cubic['coef'] = init_poly(3)
+# config_quadratic['a'] = np.random.uniform(low=-1, high=1, size=None)
+# config_quadratic['b'] = np.random.uniform(low=-1, high=1, size=None)
+config_cubic['theta'] = np.random.uniform(high=2*pi, size=None)
 # np.random.seed(seed)
