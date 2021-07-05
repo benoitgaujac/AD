@@ -264,8 +264,8 @@ class Run(object):
                     # hm limits
                     # m = min(m, np.amin(transformed[:,0]), np.amin(transformed[:,1]))
                     # M = max(M, np.amax(transformed[:,0]), np.amax(transformed[:,1]))
-                    # m = min(m, np.amin(transformed))
-                    # M = max(M, np.amax(transformed))
+                    mx, Mx = np.amin(transformed[:,0]), np.amax(transformed[:,0])
+                    my, My = np.amin(transformed[:,1]), np.amax(transformed[:,1])
                 else:
                     transformed = None
                 # score fct heatmap
@@ -284,7 +284,7 @@ class Run(object):
                                     self.lmbda: self.opts['lmbda']}
                 heatmap = self.sess.run(self.heatmap_score_anomalies,
                                     feed_dict=feed_dict)
-                heatmap = heatmap.reshape([101,101])[::-1,::-1]
+                heatmap = heatmap.reshape([101,101])[:,::-1]
 
                 # plot
                 plot_train(self.opts, Losses, Losses_test,
@@ -389,7 +389,7 @@ class Run(object):
                     loss=np.array(Losses),
                     loss_test=np.array(Losses_test),
                     loss_anomalies=np.array(Scores_anomalies),
-                    theta=self.opts['theta'], a=self.opts['a'], b=self.opts['b'],
+                    theta=self.opts['theta'], coef=np.array(self.opts['coef']),
                     psi=np.array(Psi), d = np.array(D))
 
 #     def test(self, MODEL_PATH=None, WEIGHTS_FILE=None):
