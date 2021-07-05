@@ -253,10 +253,8 @@ class Run(object):
                                 self.opts['dataset'],
                                 True)
                 # hm limits
-                # m = min(np.amin(batch_inputs[0][:,0]), np.amin(batch_inputs[0][:,1]))
-                # M = max(np.amax(batch_inputs[0][:,0]), np.amax(batch_inputs[0][:,1]))
-                m = np.amin(batch_inputs[0])
-                M = np.amax(batch_inputs[0])
+                mx, Mx = np.amin(batch_inputs[0][:,0]), np.amax(batch_inputs[0][:,0])
+                my, My = np.amin(batch_inputs[0][:,1]), np.amax(batch_inputs[0][:,1])
                 if self.opts['flow']!='identity':
                     feed_dict={self.x: batch_inputs[0],
                                     self.gamma: self.opts['gamma'],
@@ -266,25 +264,27 @@ class Run(object):
                     # hm limits
                     # m = min(m, np.amin(transformed[:,0]), np.amin(transformed[:,1]))
                     # M = max(M, np.amax(transformed[:,0]), np.amax(transformed[:,1]))
-                    m = min(m, np.amin(transformed))
-                    M = max(M, np.amax(transformed))
+                    # m = min(m, np.amin(transformed))
+                    # M = max(M, np.amax(transformed))
                 else:
                     transformed = None
                 # score fct heatmap
                 # hm_lim = max(abs(m),abs(M))
-                hm_lim = self.opts['hm_lim']
-                xs = np.linspace(-hm_lim, hm_lim, 101, endpoint=True)
-                ys = np.linspace(-hm_lim, hm_lim, 101, endpoint=True)
+                # hm_lim = self.opts['hm_lim']
+                # xs = np.linspace(-hm_lim, hm_lim, 101, endpoint=True)
+                # ys = np.linspace(-hm_lim, hm_lim, 101, endpoint=True)
+                xs = np.linspace(mx, Mx, 101, endpoint=True)
+                ys = np.linspace(my, My, 101, endpoint=True)
                 xv, yv = np.meshgrid(xs,ys)
                 grid = np.stack((xv,yv),axis=-1)
-                grid = grid[:,::-1]
+                # grid = grid[:,::-1]
                 grid = grid.reshape([-1,2])
                 feed_dict={self.x: grid,
                                     self.gamma: self.opts['gamma'],
                                     self.lmbda: self.opts['lmbda']}
                 heatmap = self.sess.run(self.heatmap_score_anomalies,
                                     feed_dict=feed_dict)
-                heatmap = heatmap.reshape([101,101])
+                heatmap = heatmap.reshape([101,101])[::-1,::-1]
 
                 # plot
                 plot_train(self.opts, Losses, Losses_test,

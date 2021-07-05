@@ -4,7 +4,7 @@ import numpy as np
 
 # Helper to define polynomial params for data
 def init_poly(n):
-    coef = [np.random.uniform(low=1, high=11, size=None)*(2*np.random.randint(0, 2)-1) for _ in range(n+1)]
+    coef = [np.random.uniform(low=5, high=11, size=None)*(2*np.random.randint(0, 2)-1) for _ in range(n+1)]
     return coef
 
 ### Default common config
@@ -16,7 +16,7 @@ config['save_final'] = True
 config['save_train_data'] = True
 config['evaluate_every'] = 100
 config['out_dir'] = 'code_outputs'
-config['hm_lim'] = 1
+config['hm_lim'] = 10
 
 # - Experiment set up
 config['train_dataset_size'] = -1
