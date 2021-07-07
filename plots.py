@@ -11,6 +11,7 @@ from matplotlib.ticker import FormatStrFormatter
 import utils
 
 import pdb
+dpi = 100
 
 
 def plot_train(opts, trloss, teloss, scores, heatmap, inputs, transformed, Phi, D, exp_dir, filename):
@@ -29,7 +30,6 @@ def plot_train(opts, trloss, teloss, scores, heatmap, inputs, transformed, Phi, 
 
 
     ### Creating a pyplot fig
-    dpi = 100
     height_pic = 1000
     width_pic = 1000
     fig_width = 3 *height_pic / float(dpi)
@@ -153,7 +153,7 @@ def plot_train(opts, trloss, teloss, scores, heatmap, inputs, transformed, Phi, 
     axes[2,1].set_yticks(yticks)
     axes[2,1].set_yticklabels(yticks)
     axes[2,1].yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-    xticks = np.linspace(-mx,Mx,5)
+    xticks = np.linspace(mx,Mx,5)
     axes[2,1].set_xticks(xticks)
     axes[2,1].set_xticklabels(xticks)
     # axes[2,1].set_xticklabels(np.linspace(-lim,lim,5))
@@ -183,6 +183,64 @@ def plot_train(opts, trloss, teloss, scores, heatmap, inputs, transformed, Phi, 
                 dpi=dpi, format='png')
     plt.close()
 
+def plot_transformation(inputs, transformed, exp_dir, filename):
+    ### The transformed inputs if needed
+    fig_height = 500 / float(dpi)
+    fig_width = 500 / float(dpi)
+    fig = plt.figure(figsize=(fig_width, fig_height))
+    img = zip([inputs, transformed],
+                [('red', 10, 'inputs', .8),
+                (('blue', 12, 'trans', 1.))])
+    for xy, style in img:
+        x = xy[:,0]
+        y = xy[:,1]
+        plt.scatter(x, y, c=style[0], s=style[1], label=style[2], alpha=style[3])
+        # m = min(m, np.amin(x), np.amin(y))
+        # M = max(M, np.amax(x), np.amax(y))
+        mx, Mx = np.amin(x), np.amax(x)
+        my, My = np.amin(y), np.amax(y)
+    yticks = np.linspace(my,My,5)
+    plt.yticks(yticks)
+    # plt.yticklabels(yticks)
+    # axes[2,1].yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+    xticks = np.linspace(mx,Mx,5)
+    plt.xticks(xticks)
+    # plt.xticklabels(xticks)
+    # axes[2,1].xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+    plt.legend(loc='best')
+    plt.title('Flow Transformation')
+    save_dir = os.path.join(exp_dir, 'test_plots')
+    if not os.path.isdir(save_dir):
+        utils.create_dir(save_dir)
+    filename = 'transformed_' + filename
+    fig.savefig(utils.o_gfile((save_dir, filename + '.png'), 'wb'),
+                dpi=dpi,format='png', bbox_inches='tight',pad_inches = 0.03)
+    plt.close()
+
+
+def plot_score_heatmap(heatmap, exp_dir, filename):
+    ### The transformed inputs if needed
+    fig_height = 500 / float(dpi)
+    fig_width = 500 / float(dpi)
+    fig = plt.figure(figsize=(fig_width, fig_height))
+    plt.imshow(np.log(heatmap), cmap='hot_r', interpolation='nearest')
+    plt.title('logScore heatmap')
+    # fig.colorbar(axes[2,0].imshow(heatmap, cmap='hot_r', interpolation='nearest'), ax=axes[2,0], shrink=0.75, fraction=0.08) #, format=format[dataset])
+
+    # yticks = np.linspace(my,My,5)
+    # plt.yticks(yticks)
+    # plt.yticklabels(yticks)
+    # xticks = np.linspace(mx,Mx,5)
+    # plt.xticks(xticks)
+    # plt.xticklabels(xticks)
+
+    save_dir = os.path.join(exp_dir, 'test_plots')
+    if not os.path.isdir(save_dir):
+        utils.create_dir(save_dir)
+    filename = 'score_heatmap_' + filename
+    fig.savefig(utils.o_gfile((save_dir, filename + '.png'), 'wb'),
+                dpi=dpi,format='png', bbox_inches='tight',pad_inches = 0.03)
+    plt.close()
 
 def discrete_cmap(N, base_cmap=None):
     """Create an N-bin discrete colormap from the specified input map"""

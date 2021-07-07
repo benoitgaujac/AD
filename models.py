@@ -54,7 +54,7 @@ class Model(object):
         outputs: [batch,]
         """
 
-        ### normaizing flow
+        ### normalizing flow
         inputs = self.flow(inputs, reuse=reuse)
         ### affine transform
         # get model params

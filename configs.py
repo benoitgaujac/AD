@@ -4,7 +4,7 @@ import numpy as np
 
 # Helper to define polynomial params for data
 def init_poly(n):
-    coef = [np.random.uniform(low=5, high=11, size=None)*(2*np.random.randint(0, 2)-1) for _ in range(n+1)]
+    coef = [np.float32(np.random.uniform(low=5, high=11, size=None))*(2*np.random.randint(0, 2)-1) for _ in range(n+1)]
     return coef
 
 ### Default common config
@@ -113,5 +113,5 @@ config_cubic['dataset'] = 'cubic'
 config_cubic['coef'] = init_poly(3)
 # config_quadratic['a'] = np.random.uniform(low=-1, high=1, size=None)
 # config_quadratic['b'] = np.random.uniform(low=-1, high=1, size=None)
-config_cubic['theta'] = np.random.uniform(high=2*pi, size=None)
+config_cubic['theta'] = np.float32(np.random.uniform(high=2*pi, size=None))
 # np.random.seed(seed)

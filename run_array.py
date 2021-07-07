@@ -117,7 +117,7 @@ def main():
     opts['d_const'] = FLAGS.d_const
     """
     # Different scaling factor for non affine model
-    exp = [1,2,3,5]
+    exp = [1,2,3,4]
     # setting exp id
     exp_id = (FLAGS.exp_id-1) % len(exp)
     opts['nsteps'] = exp[exp_id]
@@ -150,7 +150,6 @@ def main():
     out_dir = os.path.join(data_dir, FLAGS.out_dir)
     if not tf.io.gfile.isdir(out_dir):
         utils.create_dir(out_dir)
-    # opts['out_dir'] = out_dir
     opts['out_dir'] = os.path.join(out_dir, 'nsteps{}'.format(opts['nsteps']))
     if not tf.io.gfile.isdir(opts['out_dir']):
         utils.create_dir(opts['out_dir'])

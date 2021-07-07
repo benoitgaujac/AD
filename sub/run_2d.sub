@@ -8,9 +8,9 @@
 #$ -l tmem=2G
 #$ -l h_rt=5:00:00
 
-#$ -t 1-8
+#$ -t 1-12
 
-#$ -N planar
+#$ -N cubic
 
 source /share/apps/examples/source_files/python/python-3.6.4.source
 source /share/apps/examples/source_files/cuda/cuda-10.0.source
@@ -33,7 +33,7 @@ source /share/apps/examples/source_files/cuda/cuda-10.0.source
 ### quadratic dataset
 # python3 run_array.py --dataset quadratic --num_it 100000 --out_dir identity --exp_id $SGE_TASK_ID
 # python3 run_array.py --flow mlp --dataset quadratic --num_it 100000 --out_dir mlp --exp_id $SGE_TASK_ID
-python3 run_array.py --flow planar --dataset quadratic --num_it 100000 --out_dir planar --exp_id $SGE_TASK_ID
+# python3 run_array.py --flow planar --dataset quadratic --num_it 100000 --out_dir planar --exp_id $SGE_TASK_ID
 
 ### cubic dataset
 # python3 run_array.py --dataset cubic --num_it 100000 --out_dir identity --exp_id $SGE_TASK_ID
@@ -41,4 +41,4 @@ python3 run_array.py --flow planar --dataset quadratic --num_it 100000 --out_dir
 python3 run_array.py --flow planar --dataset cubic --num_it 100000 --out_dir planar --exp_id $SGE_TASK_ID
 
 ### testing
-# python3 run_test.py --data_dir ../data --dataset mnist --out_dir mnist_zdim10_econv_dconv --net_archi conv_per_mix_econv_dconv --mode plot --zdim 10 --weights_file trained-WAE-final-200000 --model WAE --res_dir res_750_2021_03_25_10_50 --samples_near_modes
+# python3 run.py --flow planar --dataset quadratic --num_it 50000 --out_dir planar --mode plot --weights_file trained-planar-final-100000 --nsteps 2 --exp_dir w_False_d_True_constr_d_True_g0.0_l0.0_run_6_2021_07_05_20_36
