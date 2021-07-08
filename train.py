@@ -271,10 +271,10 @@ class Run(object):
                 # score fct heatmap
                 # hm_lim = max(abs(m),abs(M))
                 # hm_lim = self.opts['hm_lim']
-                # xs = np.linspace(-hm_lim, hm_lim, 101, endpoint=True)
-                # ys = np.linspace(-hm_lim, hm_lim, 101, endpoint=True)
-                xs = np.linspace(mx, Mx, 101, endpoint=True)
-                ys = np.linspace(my, My, 101, endpoint=True)
+                xs = np.linspace(-1, 1, 101, endpoint=True)
+                ys = np.linspace(-1, 1, 101, endpoint=True)
+                # xs = np.linspace(mx, Mx, 101, endpoint=True)
+                # ys = np.linspace(my, My, 101, endpoint=True)
                 xv, yv = np.meshgrid(xs,ys)
                 grid = np.stack((xv,yv),axis=-1)
                 # grid = grid[:,::-1]

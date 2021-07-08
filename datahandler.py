@@ -28,7 +28,7 @@ def _data_generator(dataset_size, dataset, anomalous):
             x = _nominal_generator(dataset)
         else:
             # generate anomalous
-            high = 10
+            high = 1
             r = np.random.uniform(low=-high, high=high, size=None)
             theta = np.random.uniform(low=0.0, high=pi, size=None)
             x = np.array((r*cos(theta), r*sin(theta)))
@@ -40,30 +40,38 @@ def _nominal_generator(dataset):
     if not isinstance(dataset, str):
         dataset = dataset.decode('UTF-8')
     if dataset=='line':
-        # r = np.random.uniform(low=-1, high=1, size=None)
-        r = configs.config_line['coef'][0]
+        r = np.random.uniform(low=-configs.config_line['coef'][0], high=configs.config_line['coef'][0], size=None)
+        # r = configs.config_line['coef'][0]
         theta = configs.config_line['theta'] #float(pi / 6.)
         x = np.array((r*cos(theta), r*sin(theta)))
     elif dataset=='quadratic':
-        z = np.random.uniform(low=-10, high=10, size=None)
+        if configs.config_quadratic['fixed_dataset']:
+            z = np.random.uniform(low=-0.75, high=0.75, size=None)
+        else:
+            z = np.random.uniform(low=-10, high=10, size=None)
         # x = np.array((z, configs.config_quadratic['a']*z*z + configs.config_quadratic['b']))
         quad = configs.config_quadratic['coef'][0]*z*z \
                 + configs.config_quadratic['coef'][1]*z \
                 + configs.config_quadratic['coef'][2]
         x = np.array((z, quad))
-        x *= np.array([10e-2, 10e-4])
+        if not configs.config_quadratic['fixed_dataset']:
+            x *= np.array([10e-2, 10e-4])
         rot = np.stack([cos(configs.config_quadratic['theta']), -sin(configs.config_quadratic['theta']),
                         sin(configs.config_quadratic['theta']), cos(configs.config_quadratic['theta'])], 0).reshape([2,2])
         x = np.matmul(rot, x)
     elif dataset=='cubic':
-        z = np.random.uniform(low=-10, high=10, size=None)
+        if configs.config_quadratic['fixed_dataset']:
+            z = np.random.uniform(low=-0.75, high=0.75, size=None)
+        else:
+            z = np.random.uniform(low=-10, high=10, size=None)
         # x = np.array((z, configs.config_quadratic['a']*z*z + configs.config_quadratic['b']))
         cub = configs.config_cubic['coef'][0]*z*z*z \
                 + configs.config_cubic['coef'][1]*z*z \
                 + configs.config_cubic['coef'][2]*z \
                 + configs.config_cubic['coef'][3]
         x = np.array((z, cub))
-        x *= np.array([10e-2, 10e-5])
+        if not configs.config_quadratic['fixed_dataset']:
+            x *= np.array([10e-2, 10e-5])
         rot = np.stack([cos(configs.config_cubic['theta']), -sin(configs.config_cubic['theta']),
                         sin(configs.config_cubic['theta']), cos(configs.config_cubic['theta'])], 0).reshape([2,2])
         x = np.matmul(rot, x)

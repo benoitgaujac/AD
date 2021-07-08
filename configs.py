@@ -21,6 +21,7 @@ config['hm_lim'] = 10
 # - Experiment set up
 config['train_dataset_size'] = -1
 config['use_anomalous'] = False
+config['fixed_dataset'] = False
 seed = 1234
 config['flow'] = 'planar' # identy, mlp, planar, realNVP, glow
 config['use_trained'] = False # train from pre-trained model

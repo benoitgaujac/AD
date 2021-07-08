@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 import logging
 import argparse
-from math import pi
+from math import pi, sqrt
 import tensorflow.compat.v1 as tf
 tf.disable_eager_execution()
 print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
@@ -24,6 +24,8 @@ parser.add_argument("--dataset", default='line',
                     help='dataset')
 parser.add_argument("--anomalous", action='store_true', default=False,
                     help='whether or not use anomalous data')
+parser.add_argument("--fixed_dataset", action='store_true', default=False,
+                    help='whether or not to sample randomly nominal manifold')
 parser.add_argument("--num_it", type=int, default=10000,
                     help='iteration number')
 parser.add_argument("--batch_size", type=int, default=100,
@@ -70,12 +72,25 @@ def main():
     # Select dataset to use
     if FLAGS.dataset == 'line':
         opts = configs.config_line
+        if FLAGS.fixed_dataset:
+            configs.config_line['fixed_dataset'] = True
+            configs.config_line['coef'] = [sqrt(2)*0.75]
+            configs.config_line['theta'] = pi/4.
     elif FLAGS.dataset == 'quadratic':
         opts = configs.config_quadratic
+        if FLAGS.fixed_dataset:
+            configs.config_quadratic['fixed_dataset'] = True
+            configs.config_quadratic['coef'] = [1., 0., -0.5]
+            configs.config_quadratic['theta'] = -pi/2.
     elif FLAGS.dataset == 'cubic':
         opts = configs.config_cubic
+        if FLAGS.fixed_dataset:
+            configs.config_cubic['fixed_dataset'] = True
+            configs.config_cubic['coef'] = [10., 0., 0., 0.]
+            configs.config_cubic['theta'] = -pi/2.
     else:
         raise ValueError('Unknown {} dataset' % FLAGS.dataset)
+
     if FLAGS.anomalous:
         opts['use_anomalous'] = FLAGS.anomalous
 
