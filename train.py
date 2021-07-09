@@ -252,32 +252,19 @@ class Run(object):
                                 200,
                                 self.opts['dataset'],
                                 True)
-                # hm limits
-                mx, Mx = np.amin(batch_inputs[0][:,0]), np.amax(batch_inputs[0][:,0])
-                my, My = np.amin(batch_inputs[0][:,1]), np.amax(batch_inputs[0][:,1])
                 if self.opts['flow']!='identity':
                     feed_dict={self.x: batch_inputs[0],
                                     self.gamma: self.opts['gamma'],
                                     self.lmbda: self.opts['lmbda']}
                     transformed = self.sess.run(self.transformed,
                                     feed_dict=feed_dict)
-                    # hm limits
-                    # m = min(m, np.amin(transformed[:,0]), np.amin(transformed[:,1]))
-                    # M = max(M, np.amax(transformed[:,0]), np.amax(transformed[:,1]))
-                    mx, Mx = np.amin(transformed[:,0]), np.amax(transformed[:,0])
-                    my, My = np.amin(transformed[:,1]), np.amax(transformed[:,1])
                 else:
                     transformed = None
                 # score fct heatmap
-                # hm_lim = max(abs(m),abs(M))
-                # hm_lim = self.opts['hm_lim']
                 xs = np.linspace(-1, 1, 101, endpoint=True)
                 ys = np.linspace(-1, 1, 101, endpoint=True)
-                # xs = np.linspace(mx, Mx, 101, endpoint=True)
-                # ys = np.linspace(my, My, 101, endpoint=True)
                 xv, yv = np.meshgrid(xs,ys)
                 grid = np.stack((xv,yv),axis=-1)
-                # grid = grid[:,::-1]
                 grid = grid.reshape([-1,2])
                 feed_dict={self.x: grid,
                                     self.gamma: self.opts['gamma'],
@@ -414,9 +401,6 @@ class Run(object):
                         200,
                         self.opts['dataset'],
                         True)
-        # hm limits
-        mx, Mx = np.amin(batch_inputs[0][:,0]), np.amax(batch_inputs[0][:,0])
-        my, My = np.amin(batch_inputs[0][:,1]), np.amax(batch_inputs[0][:,1])
         if self.opts['flow']!='identity':
             feed_dict={self.x: batch_inputs[0],
                             self.gamma: self.opts['gamma'],
@@ -424,22 +408,12 @@ class Run(object):
             transformed = self.sess.run(self.transformed,
                             feed_dict=feed_dict)
             plot_transformation(batch_inputs[0], transformed, self.opts['exp_dir'], self.opts['dataset'])
-            # hm limits
-            # m = min(m, np.amin(transformed[:,0]), np.amin(transformed[:,1]))
-            # M = max(M, np.amax(transformed[:,0]), np.amax(transformed[:,1]))
-            mx, Mx = np.amin(transformed[:,0]), np.amax(transformed[:,0])
-            my, My = np.amin(transformed[:,1]), np.amax(transformed[:,1])
 
         # - score heatmap
-        # hm_lim = max(abs(m),abs(M))
-        # hm_lim = self.opts['hm_lim']
-        # xs = np.linspace(-hm_lim, hm_lim, 101, endpoint=True)
-        # ys = np.linspace(-hm_lim, hm_lim, 101, endpoint=True)
-        xs = np.linspace(mx, Mx, 101, endpoint=True)
-        ys = np.linspace(my, My, 101, endpoint=True)
+        xs = np.linspace(-1, 1, 101, endpoint=True)
+        ys = np.linspace(-1, 1, 101, endpoint=True)
         xv, yv = np.meshgrid(xs,ys)
         grid = np.stack((xv,yv),axis=-1)
-        # grid = grid[:,::-1]
         grid = grid.reshape([-1,2])
         feed_dict={self.x: grid,
                             self.gamma: self.opts['gamma'],

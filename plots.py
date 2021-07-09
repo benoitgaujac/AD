@@ -5,7 +5,7 @@ from math import pi
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import matplotlib.colors
+# import matplotlib.colors
 from matplotlib.ticker import FormatStrFormatter
 
 import utils
@@ -78,14 +78,6 @@ def plot_train(opts, trloss, teloss, scores, heatmap, inputs, transformed, Phi, 
         # y = np.log(y)
         axes[0,0].plot(x, y, linewidth=2, color=color, linestyle='--', label=label)
     axes[0,0].grid(axis='y')
-    # handles, labels = plt.gca().get_legend_handles_labels()
-    # order, nlabels = [], len(labels)
-    # for i in range(nlabels):
-    #     if i%2==0:
-    #         order.append(int((nlabels+i)/2))
-    #     else:
-    #         order.append(int(i/2))
-    # plt.legend([handles[idx] for idx in order],[labels[idx] for idx in order],loc='upper right')
     axes[0,0].legend(loc='best', ncol=2)
     axes[0,0].set_title('Log Losses')
 
@@ -96,9 +88,6 @@ def plot_train(opts, trloss, teloss, scores, heatmap, inputs, transformed, Phi, 
                                 [('red', 'nominal score'),
                                 ('blue', '|anomalous score|')]):
         total_num = len(y)
-        # x_step = max(int(total_num / 200), 1)
-        # x = np.arange(1, len(y) + 1, x_step)
-        # y = np.log(y)
         x = np.arange(1, total_num + 1)
         axes[0,1].plot(x, y, linewidth=1, color=color, label=label)
     axes[0,1].legend(loc='upper right')
@@ -129,52 +118,37 @@ def plot_train(opts, trloss, teloss, scores, heatmap, inputs, transformed, Phi, 
     axes[1,1].set_title('Model params')
 
     ### The transformed inputs if needed
-    m, M = 100, -100
     if opts['flow']!='identity':
-        img = zip([inputs, transformed],
-                    [('red', 10, 'inputs', .8),
-                    (('blue', 12, 'transformed', 1.))])
-        for xy, style in img:
+        cmap = discrete_cmap(max(5,len(transformed)+1), base_cmap='tab10')
+        x = inputs[:,0]
+        y = inputs[:,1]
+        axes[2,1].scatter(x, y, c='red', s=10, alpha=.8, label='inputs')
+        for n in range(len(transformed)):
+            xy = transformed[n]
             x = xy[:,0]
             y = xy[:,1]
-            axes[2,1].scatter(x, y, c=style[0], s=style[1], label=style[2], alpha=style[3])
-            # m = min(m, np.amin(x), np.amin(y))
-            # M = max(M, np.amax(x), np.amax(y))
-            mx, Mx = min(m, np.amin(x)), max(M, np.amax(x))
-            my, My = min(m, np.amin(y)), max(M, np.amax(y))
-    else:
-        axes[2,1].scatter(inputs[:,0], inputs[:,1], c='red', s=10, label='inputs')
-        # m = min(m, np.amin(inputs[:,0]), np.amin(inputs[:,1]))
-        # M = max(M, np.amax(inputs[:,0]), np.amax(inputs[:,1]))
-        mx, Mx = min(m, np.amin(x)), max(M, np.amax(x))
-        my, My = min(m, np.amin(y)), max(M, np.amax(y))
-    lim = max(abs(m),abs(M))
-    # yticks = np.linspace(my,My,5)
-    yticks = np.linspace(-1,1,5)
-    axes[2,1].set_yticks(yticks)
-    axes[2,1].set_yticklabels(yticks)
-    axes[2,1].yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-    # xticks = np.linspace(mx,Mx,5)
-    xticks = np.linspace(-1,1,5)
-    axes[2,1].set_xticks(xticks)
-    axes[2,1].set_xticklabels(xticks)
-    # axes[2,1].set_xticklabels(np.linspace(-lim,lim,5))
-    axes[2,1].xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-    axes[2,1].legend(loc='best')
-    axes[2,1].set_title('Flow transformation')
+            axes[2,1].scatter(x, y, c=cmap(n), s=12, alpha=1., label='step' + str(n+1))
+        yticks = np.linspace(-1,1,5)
+        axes[2,1].set_yticks(yticks)
+        axes[2,1].set_yticklabels(yticks)
+        axes[2,1].yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+        axes[2,1].set_ylim([-1.,1])
+        xticks = np.linspace(-1,1,5)
+        axes[2,1].set_xticks(xticks)
+        axes[2,1].set_xticklabels(xticks)
+        axes[2,1].xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+        axes[2,1].set_xlim([-1.,1])
+        axes[2,1].legend(loc='best')
+        axes[2,1].set_title('Flow transformation')
 
     ### The score heatmap
     axes[2,0].imshow(np.log(heatmap), cmap='hot_r', interpolation='nearest')
     ticks = np.linspace(0,heatmap.shape[0]-1,5)
-    # pdb.set_trace()
     axes[2,0].set_yticks(ticks)
     axes[2,0].set_yticklabels(np.linspace(-1,1,5)[::-1])
-    # axes[2,0].yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
     axes[2,0].set_xticks(ticks)
-    axes[2,0].set_xticklabels(np.linspace(-1,1,5))#[::-1])
-    # axes[2,0].xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+    axes[2,0].set_xticklabels(np.linspace(-1,1,5))
     axes[2,0].set_title('logScore heatmap')
-    # fig.colorbar(axes[2,0].imshow(heatmap, cmap='hot_r', interpolation='nearest'), ax=axes[2,0], shrink=0.75, fraction=0.08) #, format=format[dataset])
 
     ### Saving plots
     # Plot
@@ -190,25 +164,20 @@ def plot_transformation(inputs, transformed, exp_dir, filename):
     fig_height = 500 / float(dpi)
     fig_width = 500 / float(dpi)
     fig = plt.figure(figsize=(fig_width, fig_height))
-    img = zip([inputs, transformed],
-                [('red', 10, 'inputs', .8),
-                (('blue', 12, 'trans', 1.))])
-    for xy, style in img:
+    cmap = discrete_cmap(max(5,len(transformed)+1), base_cmap='tab10')
+    x = inputs[:,0]
+    y = inputs[:,1]
+    plt.scatter(x, y, c='red', s=10, alpha=.8, label='inputs')
+    for n in range(len(transformed)):
+        xy = transformed[n]
         x = xy[:,0]
         y = xy[:,1]
-        plt.scatter(x, y, c=style[0], s=style[1], label=style[2], alpha=style[3])
-        # m = min(m, np.amin(x), np.amin(y))
-        # M = max(M, np.amax(x), np.amax(y))
-        mx, Mx = np.amin(x), np.amax(x)
-        my, My = np.amin(y), np.amax(y)
-    yticks = np.linspace(my,My,5)
-    plt.yticks(yticks, yticks)
-    # plt.yticklabels(yticks)
-    # axes[2,1].yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-    xticks = np.linspace(mx,Mx,5)
-    plt.xticks(xticks, xticks)
-    # plt.xticklabels(xticks)
-    # axes[2,1].xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+        plt.scatter(x, y, c=cmap(n), s=12, alpha=1., label='step' + str(n+1))
+    ticks = np.linspace(-1,1,5)
+    plt.yticks(ticks, ticks)
+    plt.ylim(-1, 1)
+    plt.xticks(ticks, ticks)
+    plt.xlim(-1, 1)
     plt.legend(loc='best')
     plt.title('Flow Transformation')
     save_dir = os.path.join(exp_dir, 'test_plots')
@@ -230,12 +199,12 @@ def plot_score_heatmap(heatmap, exp_dir, filename):
     # fig.colorbar(axes[2,0].imshow(heatmap, cmap='hot_r', interpolation='nearest'), ax=axes[2,0], shrink=0.75, fraction=0.08) #, format=format[dataset])
 
     yticks = np.linspace(0,100,5)
-    plt.yticks(yticks, np.linspace(-5,5,5))
+    plt.yticks(yticks, np.linspace(-1,1,5)[::-1])
     # plt.yticklabels(np.linspace(-10,11,5))
     # xticks = np.linspace(mx,Mx,5)
     # plt.xticks(xticks)
     # plt.xticklabels(xticks)
-    plt.xticks(yticks, np.linspace(-5,5,5))
+    plt.xticks(yticks, np.linspace(-1,1,5))
     # plt.xticklabels(np.linspace(-10,11,5))
 
     save_dir = os.path.join(exp_dir, 'test_plots')
@@ -254,4 +223,4 @@ def discrete_cmap(N, base_cmap=None):
     base = plt.cm.get_cmap(base_cmap)
     color_list = base(np.linspace(0, 1, N))
     cmap_name = base.name + str(N)
-    return colors.LinearSegmentedColormap.from_list(cmap_name, color_list, N)
+    return matplotlib.colors.LinearSegmentedColormap.from_list(cmap_name, color_list, N)

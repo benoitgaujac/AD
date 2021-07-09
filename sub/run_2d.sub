@@ -8,7 +8,7 @@
 #$ -l tmem=2G
 #$ -l h_rt=5:00:00
 
-#$ -t 1-12
+#$ -t 1-16
 
 #$ -N cubic
 
@@ -17,7 +17,7 @@ source /share/apps/examples/source_files/cuda/cuda-10.0.source
 
 # test local
 # python3 run.py --save_model --flow planar --dataset quadratic --num_it 50000 --out_dir planar_test --nsteps 1
-# python3 run.py --save_model --flow planar --dataset cubic --num_it 50000 --out_dir planar_test --nsteps 1 --fixed_dataset
+# python3 run.py --save_model --flow planar --dataset cubic --num_it 50000 --out_dir planar_test --nsteps 3 --fixed_dataset
 # python3 run.py --save_model --flow planar --dataset line --num_it 50000 --out_dir planar_line_test --nsteps 1
 # python3 run.py --save_model --flow identity --dataset line --num_it 50000 --out_dir id_line_test --nsteps 1
 # python3 run.py --save_model --dataset line --num_it 50000 --out_dir id_line_test --nsteps 1
@@ -41,4 +41,4 @@ source /share/apps/examples/source_files/cuda/cuda-10.0.source
 python3 run_array.py --flow planar --dataset cubic --num_it 100000 --out_dir planar --exp_id $SGE_TASK_ID --fixed_dataset
 
 ### testing
-# python3 run.py --flow planar --dataset cubic --num_it 50000 --out_dir planar --mode plot --weights_file trained-planar-final-100000 --nsteps 4 --exp_dir w_False_d_True_constr_d_True_g0.0_l0.0_run_8_2021_07_07_16_03
+# python3 run.py --flow planar --dataset cubic --num_it 50000 --out_dir planar --mode plot --weights_file trained-planar-final-100000 --nsteps 4 --exp_dir w_False_d_True_constr_d_True_g0.0_l0.0_run_12_2021_07_08_15_09

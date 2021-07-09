@@ -38,10 +38,12 @@ class Model(object):
         Perform normalizing flow on the inputs
         """
 
-        outputs = inputs
+        outputs = []
+        layer_x = inputs
         with tf.variable_scope('flow', reuse=reuse):
             for i in range(self.opts['nsteps']):
-                outputs = normalizing_flow.flow(self.opts, outputs, 'flow_step{}'.format(i), reuse)
+                layer_x = normalizing_flow.flow(self.opts, layer_x, 'flow_step{}'.format(i), reuse)
+                outputs.append(layer_x)
 
         return outputs
 
@@ -63,7 +65,7 @@ class Model(object):
         A = tf.linalg.matmul(D, tf.transpose(V))
         A = tf.linalg.matmul(V, A)
         # score fct
-        score = tf.linalg.matmul(tf.expand_dims(A, 0), tf.expand_dims(inputs, -1))
+        score = tf.linalg.matmul(tf.expand_dims(A, 0), tf.expand_dims(inputs[-1], -1))
         score = _ops.non_linear(score, self.opts['score_nonlinear'])
         if self.opts['train_w']:
             score = tf.linalg.matmul(tf.expand_dims(W, 0), score)
