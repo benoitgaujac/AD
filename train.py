@@ -380,17 +380,18 @@ class Run(object):
                     psi=np.array(Psi), d = np.array(D))
 
 
-    def plot(self, WEIGHTS_FILE=None):
+    # def plot(self, WEIGHTS_FILE=None):
+    def plot(self, exp_dir, WEIGHTS_FILE=None):
         """
         Plots transformed input and score heatmap
         """
+        # - exp_dir
+        self.opts['exp_dir'] = exp_dir
 
         # - Load trained model
         if WEIGHTS_FILE is None:
                 raise Exception("No model/weights provided")
         else:
-            if not tf.gfile.IsDirectory(self.opts['exp_dir']):
-                raise Exception("model doesn't exist")
             WEIGHTS_PATH = os.path.join(self.opts['exp_dir'],'checkpoints', WEIGHTS_FILE)
             if not tf.gfile.Exists(WEIGHTS_PATH+".meta"):
                 raise Exception("weights file doesn't exist")
