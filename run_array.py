@@ -132,8 +132,7 @@ def main():
     opts['d_const'] = FLAGS.d_const
     """
     # Different scaling factor for non affine model
-    # exp = [1,2,3,4]
-    exp = [4,]
+    exp = [1,2,3,4]
     # setting exp id
     exp_id = (FLAGS.exp_id-1) % len(exp)
     opts['nsteps'] = exp[exp_id]
