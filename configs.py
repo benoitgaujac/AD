@@ -68,7 +68,7 @@ config['clip_w_reg_value'] = 100.
 config['w_init'] = 'glorot_uniform' #normal, he, glorot, glorot_he, glorot_uniform, ('uniform', range)
 config['w_init_std'] = 0.0099999
 config['d_init'] = 'normal' #normal, he, glorot, glorot_he, glorot_uniform, ('uniform', range)
-config['d_init_std'] = 0.0099999
+config['d_init_std'] = 0.00099999
 
 # - NN set up
 config['mlp_init'] = 'glorot_uniform' #normal, he, glorot, glorot_he, glorot_uniform, ('uniform', range)
