@@ -249,7 +249,7 @@ class Run(object):
             if it % self.opts['plot_every'] == 0:
                 # non affine transformation
                 batch_inputs = self.data._sample_observation(
-                                200,
+                                500,
                                 self.opts['dataset'],
                                 True)
                 if self.opts['flow']!='identity':
@@ -258,6 +258,10 @@ class Run(object):
                                     self.lmbda: self.opts['lmbda']}
                     transformed = self.sess.run(self.transformed,
                                     feed_dict=feed_dict)
+                    plot_transformation(batch_inputs[0], transformed,
+                                    self.opts['exp_dir'],
+                                    'train_plots',
+                                    'it%07d' % (it))
                 else:
                     transformed = None
                 # score fct heatmap
@@ -272,6 +276,9 @@ class Run(object):
                 heatmap = self.sess.run(self.heatmap_score_anomalies,
                                     feed_dict=feed_dict)
                 heatmap = heatmap.reshape([101,101])[:,::-1]
+                plot_score_heatmap(heatmap, self.opts['exp_dir'],
+                                    'train_plots',
+                                    'it%07d' % (it))
 
                 # plot
                 plot_train(self.opts, Losses, Losses_test,
@@ -399,7 +406,7 @@ class Run(object):
 
         # - transformed inputs
         batch_inputs = self.data._sample_observation(
-                        200,
+                        500,
                         self.opts['dataset'],
                         True)
         if self.opts['flow']!='identity':
@@ -408,7 +415,7 @@ class Run(object):
                             self.lmbda: self.opts['lmbda']}
             transformed = self.sess.run(self.transformed,
                             feed_dict=feed_dict)
-            plot_transformation(batch_inputs[0], transformed, self.opts['exp_dir'], self.opts['dataset'])
+            plot_transformation(batch_inputs[0], transformed, self.opts['exp_dir'], 'test_plots', self.opts['dataset'])
 
         # - score heatmap
         xs = np.linspace(-1, 1, 101, endpoint=True)
@@ -422,7 +429,7 @@ class Run(object):
         heatmap = self.sess.run(self.heatmap_score_anomalies,
                             feed_dict=feed_dict)
         heatmap = heatmap.reshape([101,101])[:,::-1]
-        plot_score_heatmap(heatmap, self.opts['exp_dir'], self.opts['dataset'])
+        plot_score_heatmap(heatmap, self.opts['exp_dir'], 'test_plots', self.opts['dataset'])
 
     # def test(self, MODEL_PATH=None, WEIGHTS_FILE=None):
     #     """

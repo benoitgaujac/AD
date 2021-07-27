@@ -133,11 +133,13 @@ def plot_train(opts, trloss, teloss, scores, heatmap, inputs, transformed, Phi, 
         axes[2,1].set_yticklabels(yticks)
         axes[2,1].yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
         axes[2,1].set_ylim([-1.,1])
+        # axes[2,1].set_ylim([-.25,0.25])
         xticks = np.linspace(-1,1,5)
         axes[2,1].set_xticks(xticks)
         axes[2,1].set_xticklabels(xticks)
         axes[2,1].xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-        axes[2,1].set_xlim([-1.,1])
+        # axes[2,1].set_xlim([-1.,1])
+        axes[2,1].set_xlim([-0.25,0.25])
         axes[2,1].legend(loc='best')
         axes[2,1].set_title('Flow transformation')
 
@@ -159,7 +161,7 @@ def plot_train(opts, trloss, teloss, scores, heatmap, inputs, transformed, Phi, 
                 dpi=dpi, format='png')
     plt.close()
 
-def plot_transformation(inputs, transformed, exp_dir, filename):
+def plot_transformation(inputs, transformed, exp_dir, plot_dir, filename):
     ### The transformed inputs if needed
     fig_height = 500 / float(dpi)
     fig_width = 500 / float(dpi)
@@ -173,14 +175,17 @@ def plot_transformation(inputs, transformed, exp_dir, filename):
         x = xy[:,0]
         y = xy[:,1]
         plt.scatter(x, y, c=cmap(n), s=12, alpha=1., label='step' + str(n+1))
-    ticks = np.linspace(-1,1,5)
+    # ticks = np.linspace(-1,1,5)
+    ticks = np.linspace(-0.5,0.5,5)
     plt.yticks(ticks, ticks)
-    plt.ylim(-1, 1)
+    # plt.ylim(-1, 1)
+    plt.ylim(-0.5, 0.5)
     plt.xticks(ticks, ticks)
-    plt.xlim(-1, 1)
+    # plt.xlim(-1, 1)
+    plt.xlim(-0.5, 0.5)
     plt.legend(loc='best')
     plt.title('Flow Transformation')
-    save_dir = os.path.join(exp_dir, 'test_plots')
+    save_dir = os.path.join(exp_dir, plot_dir)
     if not os.path.isdir(save_dir):
         utils.create_dir(save_dir)
     filename = 'transformed_' + filename
@@ -189,7 +194,7 @@ def plot_transformation(inputs, transformed, exp_dir, filename):
     plt.close()
 
 
-def plot_score_heatmap(heatmap, exp_dir, filename):
+def plot_score_heatmap(heatmap, exp_dir, plot_dir, filename):
     ### The transformed inputs if needed
     fig_height = 500 / float(dpi)
     fig_width = 500 / float(dpi)
@@ -207,7 +212,7 @@ def plot_score_heatmap(heatmap, exp_dir, filename):
     plt.xticks(yticks, np.linspace(-1,1,5))
     # plt.xticklabels(np.linspace(-10,11,5))
 
-    save_dir = os.path.join(exp_dir, 'test_plots')
+    save_dir = os.path.join(exp_dir, plot_dir)
     if not os.path.isdir(save_dir):
         utils.create_dir(save_dir)
     filename = 'score_heatmap_' + filename
