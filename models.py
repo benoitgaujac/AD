@@ -61,9 +61,12 @@ class Model(object):
         ### affine transform
         # get model params
         W, _, D, _, V = self.init_model_params(self.opts, reuse=reuse)
-        # affine
-        A = tf.linalg.matmul(D, tf.transpose(V))
-        A = tf.linalg.matmul(V, A)
+        # rotate if needed
+        if self.opts['rotate']:
+            A = tf.linalg.matmul(D, tf.transpose(V))
+            A = tf.linalg.matmul(V, A)
+        else:
+            A = D
         # score fct
         score = tf.linalg.matmul(tf.expand_dims(A, 0), tf.expand_dims(inputs[-1], -1))
         score = _ops.non_linear(score, self.opts['score_nonlinear'])

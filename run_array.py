@@ -45,6 +45,8 @@ parser.add_argument("--flow", default='identity',
                     help='score flow to use')
 parser.add_argument("--scr_nonlin", default='linear',
                     help='non linear activation for score fct')
+parser.add_argument("--rot", action='store_false', default=True,
+                    help='rotate or not [True/False]')
 parser.add_argument("--train_w", action='store_true', default=False,
                     help='whether to learn linear proj')
 parser.add_argument("--gamma", type=float, default=0.,
@@ -140,6 +142,7 @@ def main():
     # Model set up
     opts['flow'] = FLAGS.flow
     opts['score_nonlinear'] = FLAGS.scr_nonlin
+    opts['rotate'] = FLAGS.rot
     opts['train_w'] = FLAGS.train_w
     if opts['train_w']:
         opts['gamma'] = FLAGS.gamma
@@ -192,9 +195,9 @@ def main():
     opts['it_num'] = FLAGS.num_it
     opts['batch_size'] = FLAGS.batch_size
     opts['lr'] = FLAGS.lr
-    opts['plot_every'] = 1000 #int(opts['print_every'] / 2.) + 1
+    opts['plot_every'] = 5000 #int(opts['print_every'] / 2.) + 1
     opts['evaluate_every'] = int(opts['plot_every'] / 10.)
-    opts['save_every'] = 5000
+    opts['save_every'] = 1000000000
     opts['save_final'] = FLAGS.save_model
     opts['save_train_data'] = FLAGS.save_data
 

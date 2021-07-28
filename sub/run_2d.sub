@@ -33,13 +33,13 @@ source /share/apps/examples/source_files/cuda/cuda-10.0.source
 ### quadratic dataset
 # python3 run_array.py --dataset quadratic --num_it 100000 --out_dir identity --exp_id $SGE_TASK_ID
 # python3 run_array.py --flow mlp --dataset quadratic --num_it 100000 --out_dir mlp --exp_id $SGE_TASK_ID
-# python3 run_array.py --flow planar --dataset quadratic --num_it 100000 --out_dir planar --exp_id $SGE_TASK_ID --fixed_dataset
+# python3 run_array.py --flow planar --dataset quadratic --num_it 100000 --out_dir planar_no_rot --exp_id $SGE_TASK_ID --fixed_dataset
 
 ### cubic dataset
 # python3 run_array.py --dataset cubic --num_it 100000 --out_dir identity --exp_id $SGE_TASK_ID
 # python3 run_array.py --flow mlp --dataset cubic --num_it 100000 --out_dir mlp --exp_id $SGE_TASK_ID
-python3 run_array.py --flow planar --dataset cubic --num_it 50000 --out_dir planar_collapsed --fixed_dataset --exp_id $SGE_TASK_ID
+python3 run_array.py --flow planar --dataset cubic --num_it 50000 --out_dir planar_no_rot --fixed_dataset --exp_id $SGE_TASK_ID
 
 ### testing
 # python3 run.py --flow planar --dataset cubic --num_it 50000 --out_dir planar --mode plot --weights_file trained-planar-final-100000 --nsteps 4 --exp_dir w_False_d_True_constr_d_True_g0.0_l0.0_run_12_2021_07_08_15_09
-# python3 run_test_array_fixed.py --flow planar --dataset cubic --num_it 50000 --out_dir planar --weights_file trained-planar-final-200000 --nsteps 4
+# python3 run_array.py --flow planar --dataset cubic --num_it 50000 --out_dir planar_test_no_rot --rot --exp_id 4

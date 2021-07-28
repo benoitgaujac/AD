@@ -39,6 +39,7 @@ config['score_nonlinear'] = 'linear' #linear, cubic, sinh
 # if config['score_non_linear']=='linear':
 #     config['clip_score'] = True
 # else:
+config['rotate'] = True
 config['clip_score'] = False
 config['clip_score_value'] = 1000.
 
