@@ -90,6 +90,8 @@ def main():
             configs.config_cubic['fixed_dataset'] = True
             configs.config_cubic['coef'] = [10., 0., 0., 0.]
             configs.config_cubic['theta'] = -pi/2.
+    elif FLAGS.dataset == 'roll':
+        opts = configs.config_roll
     else:
         raise ValueError('Unknown {} dataset' % FLAGS.dataset)
 
@@ -195,7 +197,7 @@ def main():
     opts['it_num'] = FLAGS.num_it
     opts['batch_size'] = FLAGS.batch_size
     opts['lr'] = FLAGS.lr
-    opts['plot_every'] = 5000 #int(opts['print_every'] / 2.) + 1
+    opts['plot_every'] = 2500 #int(opts['print_every'] / 2.) + 1
     opts['evaluate_every'] = int(opts['plot_every'] / 10.)
     opts['save_every'] = 1000000000
     opts['save_final'] = FLAGS.save_model

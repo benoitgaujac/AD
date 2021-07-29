@@ -139,7 +139,7 @@ def plot_train(opts, trloss, teloss, scores, heatmap, inputs, transformed, Phi, 
         axes[2,1].set_xticklabels(xticks)
         axes[2,1].xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
         # axes[2,1].set_xlim([-1.,1])
-        axes[2,1].set_xlim([-0.25,0.25])
+        axes[2,1].set_xlim([-1.,1])
         axes[2,1].legend(loc='best')
         axes[2,1].set_title('Flow transformation')
 

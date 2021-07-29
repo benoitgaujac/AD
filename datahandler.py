@@ -75,6 +75,10 @@ def _nominal_generator(dataset):
         rot = np.stack([cos(configs.config_cubic['theta']), -sin(configs.config_cubic['theta']),
                         sin(configs.config_cubic['theta']), cos(configs.config_cubic['theta'])], 0).reshape([2,2])
         x = np.matmul(rot, x)
+    elif dataset=='roll':
+        theta = np.random.uniform(low=0, high=4*pi, size=None)
+        r = 2. * theta / (9.*pi)
+        x = np.array([r*cos(theta), r*sin(theta)])
     else:
         raise ValueError('Unknown {} dataset' % dataset)
     return x

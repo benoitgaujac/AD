@@ -88,32 +88,26 @@ config['mlpflow_eta2'] = 1.
 ### Line config
 config_line = config.copy()
 config_line['dataset'] = 'line'
-# np.random.seed(seed)
+# sampling the fix params of the linear nominal
 config_line['coef'] = init_poly(0)
-# config_line['a'] = 0.
-# config_line['b'] = 0.
 config_line['theta'] = np.random.uniform(0,pi)
-# np.random.seed()
 
 
 ### Quadratic config
 config_quadratic = config.copy()
 config_quadratic['dataset'] = 'quadratic'
 # sampling the fix params of the quadratic nominal
-# np.random.seed(seed)
 config_quadratic['coef'] = init_poly(2)
-# config_quadratic['a'] = np.random.uniform(low=-1, high=1, size=None)
-# config_quadratic['b'] = np.random.uniform(low=-1, high=1, size=None)
 config_quadratic['theta'] = np.random.uniform(high=2*pi, size=None)
-# np.random.seed(seed)
 
 ### Cubic config
 config_cubic = config.copy()
 config_cubic['dataset'] = 'cubic'
-# sampling the fix params of the quadratic nominal
-# np.random.seed(seed)
+# sampling the fix params of the cubic nominal
 config_cubic['coef'] = init_poly(3)
-# config_quadratic['a'] = np.random.uniform(low=-1, high=1, size=None)
-# config_quadratic['b'] = np.random.uniform(low=-1, high=1, size=None)
 config_cubic['theta'] = np.float32(np.random.uniform(high=2*pi, size=None))
-# np.random.seed(seed)
+
+### Roll config
+config_roll = config.copy()
+config_roll['dataset'] = 'roll'
+config_roll['theta'] = pi / 2.
