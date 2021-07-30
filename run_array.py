@@ -53,7 +53,7 @@ parser.add_argument("--gamma", type=float, default=0.,
                     help='weight regulation')
 parser.add_argument("--train_d", action='store_false', default=True,
                     help='whether to learn D')
-parser.add_argument("--d_const", action='store_false', default=True,
+parser.add_argument("--d_const", action='store_true', default=False,
                     help='whether to set beta=1/alpha')
 parser.add_argument("--lmbda", type=float, default=0.,
                     help='dilatation reg')
