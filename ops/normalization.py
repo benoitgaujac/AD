@@ -18,7 +18,9 @@ def Batchnorm_layers(opts, inputs, scope=None, is_training=False, reuse=None, sc
 
 
 def Normalization(opts, inputs, scope=None, reuse=False, is_training=True):
-    if opts['normalization'] == 'batchnorm':
+    if opts['normalization'] == 'none':
+        outputs = inputs
+    elif opts['normalization'] == 'batchnorm':
         outputs = Batchnorm_layers(opts, inputs, scope=None, reuse=None, is_training=False)
     else:
         raise ValueError('{} norm not implemented yet' % opts['normalization'])

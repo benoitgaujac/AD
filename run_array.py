@@ -43,6 +43,8 @@ parser.add_argument("--exp_id", type=int,
 # model set up
 parser.add_argument("--flow", default='identity',
                     help='score flow to use')
+parser.add_argument("--norm", default='batchnorm',
+                    help='normalisation')
 parser.add_argument("--scr_nonlin", default='linear',
                     help='non linear activation for score fct')
 parser.add_argument("--rot", action='store_false', default=True,
@@ -143,6 +145,7 @@ def main():
 
     # Model set up
     opts['flow'] = FLAGS.flow
+    opts['normalization'] = FLAGS.norm
     opts['score_nonlinear'] = FLAGS.scr_nonlin
     opts['rotate'] = FLAGS.rot
     opts['train_w'] = FLAGS.train_w
@@ -197,8 +200,10 @@ def main():
     opts['it_num'] = FLAGS.num_it
     opts['batch_size'] = FLAGS.batch_size
     opts['lr'] = FLAGS.lr
-    opts['plot_every'] = 2500 #int(opts['print_every'] / 2.) + 1
+    opts['plot_every'] = 100 #2500 #int(opts['print_every'] / 2.) + 1
     opts['evaluate_every'] = int(opts['plot_every'] / 10.)
+    opts['plot_hm'] = False
+    opts['plot_trans'] = True
     opts['save_every'] = 1000000000
     opts['save_final'] = FLAGS.save_model
     opts['save_train_data'] = FLAGS.save_data

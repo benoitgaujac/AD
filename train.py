@@ -263,10 +263,11 @@ class Run(object):
                                     self.lmbda: self.opts['lmbda']}
                     transformed = self.sess.run(self.transformed,
                                     feed_dict=feed_dict)
-                    plot_transformation(batch_inputs[0], transformed,
-                                    self.opts['exp_dir'],
-                                    'train_plots',
-                                    'it%07d' % (it))
+                    if self.opts['plot_trans']:
+                        plot_transformation(batch_inputs[0], transformed,
+                                        self.opts['exp_dir'],
+                                        'train_plots',
+                                        'it%07d' % (it))
                 else:
                     transformed = None
                 # score fct heatmap
@@ -281,9 +282,11 @@ class Run(object):
                 heatmap = self.sess.run(self.heatmap_score_anomalies,
                                     feed_dict=feed_dict)
                 heatmap = heatmap.reshape([101,101])[:,::-1]
-                plot_score_heatmap(heatmap, self.opts['exp_dir'],
-                                    'train_plots',
-                                    'it%07d' % (it))
+                if self.opts['plot_hm']:
+                    pdb.set_trace()
+                    plot_score_heatmap(heatmap, self.opts['exp_dir'],
+                                        'train_plots',
+                                        'it%07d' % (it))
 
                 # plot
                 plot_train(self.opts, Losses, Losses_test,
