@@ -38,7 +38,8 @@ class Run(object):
         # - Define Objectives
         score, self.d_reg, self.w_reg = self.model.losses(
                                     inputs=x,
-                                    reuse=False)
+                                    reuse=False,
+                                    is_training=self.is_training)
         # obj
         self.score = tf.reduce_mean(score)
         # self.objective = tf.math.abs(score) - tf.cast(y, dtype=tf.float32) * (self.lmbda*self.d_reg + self.gamma*self.w_reg)
@@ -56,14 +57,14 @@ class Run(object):
         self.add_optimizers()
 
         # - nominal/anomalous score
-        score, _ = self.model.score(inputs=self.x, reuse=True)
+        score, _ = self.model.score(inputs=self.x, reuse=True, is_training=False)
         score_anomalies = self.y*score + (1-self.y)*tf.abs(score)
         self.score_anomalies = tf.reduce_mean(score_anomalies)
         # self.heatmap_score_anomalies = tf.math.abs(score)
         self.heatmap_score_anomalies = score
 
         # - transformed outputs for non affine model
-        _, self.transformed = self.model.score(inputs=self.x, reuse=True)
+        _, self.transformed = self.model.score(inputs=self.x, reuse=True, is_training=False)
 
         # - Params values
         _, self.d, _, self.phi, _ = self.model.init_model_params(self.opts, reuse=True)
@@ -82,6 +83,7 @@ class Run(object):
         self.y = tf.placeholder(tf.float32, [None,], name='labels')
         self.gamma = tf.placeholder(tf.float32, [], name='gamma_ph')
         self.lmbda = tf.placeholder(tf.float32, [], name='lmbda_ph')
+        self.is_training = tf.placeholder(tf.bool, name='is_training_ph')
 
 
     def optimizer(self, lr, decay=1.):
@@ -167,14 +169,16 @@ class Run(object):
                                     self.data.handle: self.train_handle,
                                     self.lr_decay: decay,
                                     self.gamma: self.opts['gamma'],
-                                    self.lmbda: self.opts['lmbda']})
+                                    self.lmbda: self.opts['lmbda'],
+                                    self.is_training: True})
 
             ##### TESTING LOOP #####
             if it % self.opts['evaluate_every'] == 0:
                 # training loss
                 feed_dict={self.data.handle: self.train_handle,
                                     self.gamma: self.opts['gamma'],
-                                    self.lmbda: self.opts['lmbda']}
+                                    self.lmbda: self.opts['lmbda'],
+                                    self.is_training: False}
                 losses = self.sess.run([self.objective,
                                     self.score,
                                     self.d_reg,
@@ -191,7 +195,8 @@ class Run(object):
                     # testing losses
                     feed_dict={self.data.handle: self.test_handle,
                                     self.gamma: self.opts['gamma'],
-                                    self.lmbda: self.opts['lmbda']}
+                                    self.lmbda: self.opts['lmbda'],
+                                    self.is_training: False}
                     loss = self.sess.run([self.objective,
                                     self.score,
                                     self.d_reg,
@@ -305,7 +310,8 @@ class Run(object):
         # training loss
         feed_dict={self.data.handle: self.train_handle,
                                     self.gamma: self.opts['gamma'],
-                                    self.lmbda: self.opts['lmbda']}
+                                    self.lmbda: self.opts['lmbda'],
+                                    self.is_training: False}
         losses = self.sess.run([self.objective,
                                     self.score,
                                     self.d_reg,
@@ -318,7 +324,8 @@ class Run(object):
             # testing losses
             feed_dict={self.data.handle: self.test_handle,
                                     self.gamma: self.opts['gamma'],
-                                    self.lmbda: self.opts['lmbda']}
+                                    self.lmbda: self.opts['lmbda'],
+                                    self.is_training: False}
             loss = self.sess.run([self.objective,
                                     self.score,
                                     self.d_reg,

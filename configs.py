@@ -71,19 +71,25 @@ config['w_init_std'] = 0.0099999
 config['d_init'] = 'normal' #normal, he, glorot, glorot_he, glorot_uniform, ('uniform', range)
 config['d_init_std'] = 0.0099999
 
-# - NN set up
-config['mlp_init'] = 'glorot_uniform' #normal, he, glorot, glorot_he, glorot_uniform, ('uniform', range)
-config['conv_init'] = 'glorot_uniform' #he, glorot, normilized_glorot, truncated_norm
-config['init_bias'] = 0.0
-
 # - flows set up
-config['mlpflow_nlayers'] = 3
-config['mlpflow_init'] = 'glorot_uniform' #normal, he, glorot, glorot_he, glorot_uniform, ('uniform', range)
-config['mlpflow_init_std'] = 0.0099999
-config['mlpflow_init_bias'] = 0.0
-config['mlpflow_nonlinear'] = 'tanh'
-config['mlpflow_eta1'] = 1.
-config['mlpflow_eta2'] = 1.
+config['normalization'] = 'batchnorm'
+config['batch_norm_eps'] = 1e-05
+config['batch_norm_momentum'] = 0.99
+config['permutation'] = 'reverse'
+
+# - NN set up
+config['mlp_nlayers'] = 3
+config['mlp_nunits'] = 128
+config['mlp_init'] = 'glorot_uniform' #constant, normal, he, glorot, glorot_he, glorot_uniform, ('uniform', range)
+config['mlp_init_std'] = 0.0099999
+config['mlp_init_bias'] = 0.0
+config['mlp_nonlinear'] = 'relu'
+config['mlp_init_final'] = 'constant' #constant, normal, he, glorot, glorot_he, glorot_uniform, ('uniform', range)
+config['mlp_init_std_final'] = 0.0099999
+config['mlp_init_bias_final'] = 0.0
+config['mlp_nonlinear_final'] = 'linear'
+config['mlp_eta1'] = 1.
+config['mlp_eta2'] = 1.
 
 ### Line config
 config_line = config.copy()

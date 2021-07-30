@@ -10,7 +10,7 @@
 
 #$ -t 1-12
 
-#$ -N roll
+#$ -N glow
 
 source /share/apps/examples/source_files/python/python-3.6.4.source
 source /share/apps/examples/source_files/cuda/cuda-10.0.source
@@ -38,9 +38,9 @@ source /share/apps/examples/source_files/cuda/cuda-10.0.source
 ### cubic dataset
 # python3 run_array.py --dataset cubic --num_it 100000 --out_dir identity --exp_id $SGE_TASK_ID
 # python3 run_array.py --flow mlp --dataset cubic --num_it 100000 --out_dir mlp --exp_id $SGE_TASK_ID
-python3 run_array.py --flow planar --dataset roll --num_it 50000 --out_dir planar_no_rot --fixed_dataset --exp_id $SGE_TASK_ID
+python3 run_array.py --flow glow --dataset roll --num_it 50000 --out_dir glow --fixed_dataset --exp_id $SGE_TASK_ID
 
 ### testing
 # python3 run.py --flow planar --dataset cubic --num_it 50000 --out_dir planar --mode plot --weights_file trained-planar-final-100000 --nsteps 4 --exp_dir w_False_d_True_constr_d_True_g0.0_l0.0_run_12_2021_07_08_15_09
-# python3 run.py --flow planar --dataset roll --num_it 50000 --out_dir planar_test --rot --nsteps 4
+# python3 run.py --flow glow --dataset roll --num_it 50000 --out_dir glow_test --rot --nsteps 2
 # python3 run_array.py --flow planar --dataset cubic --num_it 50000 --out_dir planar_test_no_rot --rot --exp_id 4

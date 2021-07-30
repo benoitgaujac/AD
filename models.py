@@ -33,7 +33,7 @@ class Model(object):
         return W, d, D, phi, V
 
 
-    def flow(self, inputs, reuse=False):
+    def flow(self, inputs, reuse=False, is_training=True):
         """
         Perform normalizing flow on the inputs
         """
@@ -42,13 +42,13 @@ class Model(object):
         layer_x = inputs
         with tf.variable_scope('flow', reuse=reuse):
             for i in range(self.opts['nsteps']):
-                layer_x = normalizing_flow.flow(self.opts, layer_x, 'flow_step{}'.format(i), reuse)
+                layer_x = normalizing_flow.flow(self.opts, layer_x, 'flow_step{}'.format(i), reuse, is_training)
                 outputs.append(layer_x)
 
         return outputs
 
 
-    def score(self, inputs, reuse=False):
+    def score(self, inputs, reuse=False, is_training=True):
         """
         Return the output of last layer of the score function defined by:
         output = W * a(V^-1DV * inputs)
@@ -57,7 +57,7 @@ class Model(object):
         """
 
         ### normalizing flow
-        inputs = self.flow(inputs, reuse=reuse)
+        inputs = self.flow(inputs, reuse, is_training)
         ### affine transform
         # get model params
         W, _, D, _, V = self.init_model_params(self.opts, reuse=reuse)
@@ -124,11 +124,12 @@ class Model(object):
 
         return reg
 
-    def losses(self, inputs, reuse=False):
+
+    def losses(self, inputs, reuse=False, is_training=True):
         """
         return score, transformed outputs, D & W reg
         """
-        score, _ = self.score(inputs, reuse=reuse)
+        score, _ = self.score(inputs, reuse=reuse, is_training=is_training)
         d_reg = self.D_reg(reuse=True)
         w_reg = self.W_reg(reuse=True)
 

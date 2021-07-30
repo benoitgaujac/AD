@@ -8,22 +8,27 @@ import ops.linear as linear
 import logging
 import pdb
 
-def mlp(opts, input, output_dim, nlayers, init=None, stddev=0.0099999, bias=0., nonlinear='leaky_relu', eta1=1., eta2=1., scope=None, reuse=False):
+def mlp(opts, input, output_dim, reuse=False):
     layer_x = input
-    with tf.variable_scope(scope, reuse=reuse):
-        for i in range(nlayers-1):
-            layer_x = linear.Linear(opts, layer_x, np.prod(layer_x.get_shape().as_list()[1:]),
-                        output_dim=2, init=init,
-                        stddev=bias, bias=bias,
-                        scope='hid{}/lin'.format(i),
-                        reuse=reuse)
-            layer_x = _ops.non_linear(layer_x, 'leaky_relu', 0.2)
+    for i in range(opts['mlp_nlayers']-1):
+        layer_x = linear.Linear(opts, layer_x, np.prod(layer_x.get_shape().as_list()[1:]),
+                    output_dim=opts['mlp_nunits'],
+                    init=opts['mlp_init'],
+                    stddev=opts['mlp_init_std'],
+                    bias=opts['mlp_init_bias'],
+                    scope='hid{}/lin'.format(i),
+                    reuse=reuse)
+        layer_x = _ops.non_linear(layer_x, opts['mlp_nonlinear'], 0.2)
     # output layer
     outputs = linear.Linear(opts, layer_x, np.prod(layer_x.get_shape().as_list()[1:]),
-                output_dim=output_dim, init=init,
-                stddev=bias, bias=bias,
+                output_dim=output_dim,
+                init=opts['mlp_init_final'],
+                stddev=opts['mlp_init_std_final'],
+                bias=opts['mlp_init_bias_final'],
                 scope='hid_lin_final',
                 reuse=reuse)
-    layer_x = _ops.non_linear(layer_x, nonlinear, eta1, eta2)
+    outputs = _ops.non_linear(outputs, opts['mlp_nonlinear_final'],
+                opts['mlp_eta1'],
+                opts['mlp_eta2'])
 
-    return layer_x
+    return outputs

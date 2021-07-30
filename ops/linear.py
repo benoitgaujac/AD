@@ -25,6 +25,7 @@ def Linear(opts, input, input_dim, output_dim, init=None, stddev=0.0099999, bias
         input = tf.reshape(input, [-1, input_dim])
 
     with tf.variable_scope(scope or "lin", reuse=reuse):
+        # W
         if init == 'normal' or init == None:
             W = tf.get_variable(
                 "W", [input_dim, output_dim], tf.float32,
@@ -57,8 +58,13 @@ def Linear(opts, input, input_dim, output_dim, init=None, stddev=0.0099999, bias
                 tf.random_uniform_initializer(
                     minval=-initialization[1],
                     maxval=initialization[1]))
+        elif init == 'constant':
+            W = tf.get_variable(
+                "W", [input_dim, output_dim], tf.float32,
+                tf.constant_initializer(bias))
         else:
             raise Exception('Invalid %s mlp initialization!' % init)
+        # b
         b = tf.get_variable(
             "b", [output_dim],
             initializer=tf.constant_initializer(bias))
