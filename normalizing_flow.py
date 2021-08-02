@@ -82,7 +82,7 @@ def glow(opts, inputs, scope=None, reuse=False, is_training=True):
         log_s, t = tf.split(h, 2, -1)
         # s = tf.nn.sigmoid(log_s)
         s = tf.math.exp(log_s)
-        layer_x2 = s*layer_x2 + t
+        layer_x1 = s*layer_x1 + t
         outputs = tf.concat([layer_x1, layer_x2],axis=-1)
 
     return outputs

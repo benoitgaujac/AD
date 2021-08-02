@@ -283,7 +283,6 @@ class Run(object):
                                     feed_dict=feed_dict)
                 heatmap = heatmap.reshape([101,101])[:,::-1]
                 if self.opts['plot_hm']:
-                    pdb.set_trace()
                     plot_score_heatmap(heatmap, self.opts['exp_dir'],
                                         'train_plots',
                                         'it%07d' % (it))

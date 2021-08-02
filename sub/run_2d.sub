@@ -8,9 +8,9 @@
 #$ -l tmem=2G
 #$ -l h_rt=4:00:00
 
-#$ -t 1-5
+#$ -t 1-10
 
-#$ -N glow
+#$ -N planar_cubic
 
 source /share/apps/examples/source_files/python/python-3.6.4.source
 source /share/apps/examples/source_files/cuda/cuda-10.0.source
@@ -38,7 +38,13 @@ source /share/apps/examples/source_files/cuda/cuda-10.0.source
 ### cubic dataset
 # python3 run_array.py --dataset cubic --num_it 100000 --out_dir identity --exp_id $SGE_TASK_ID
 # python3 run_array.py --flow mlp --dataset cubic --num_it 100000 --out_dir mlp --exp_id $SGE_TASK_ID
-python3 run_array.py --flow glow --dataset roll --num_it 25000 --out_dir glow_no_rot_no_bn --rot --norm none --fixed_dataset --exp_id $SGE_TASK_ID
+python3 run_array.py --flow planar --dataset cubic --num_it 25000 --out_dir planar --norm none --fixed_dataset --exp_id $SGE_TASK_ID
+python3 run_array.py --flow planar --dataset cubic --num_it 25000 --out_dir planar_rot --rot --norm none --fixed_dataset --exp_id $SGE_TASK_ID
+python3 run_array.py --flow glow --dataset cubic --num_it 25000 --out_dir glow --norm none --fixed_dataset --exp_id $SGE_TASK_ID
+python3 run_array.py --flow glow --dataset cubic --num_it 25000 --out_dir glow_rot --rot --norm none --fixed_dataset --exp_id $SGE_TASK_ID
+
+### roll dataset
+python3 run_array.py --flow glow --dataset roll --num_it 25000 --out_dir glow --rot --norm none --fixed_dataset --exp_id $SGE_TASK_ID
 
 ### testing
 # python3 run.py --flow planar --dataset cubic --num_it 50000 --out_dir planar --mode plot --weights_file trained-planar-final-100000 --nsteps 4 --exp_dir w_False_d_True_constr_d_True_g0.0_l0.0_run_12_2021_07_08_15_09

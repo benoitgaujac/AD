@@ -43,11 +43,11 @@ parser.add_argument("--exp_id", type=int,
 # model set up
 parser.add_argument("--flow", default='identity',
                     help='score flow to use')
-parser.add_argument("--norm", default='batchnorm',
+parser.add_argument("--norm", default='none',
                     help='normalisation')
 parser.add_argument("--scr_nonlin", default='linear',
                     help='non linear activation for score fct')
-parser.add_argument("--rot", action='store_false', default=True,
+parser.add_argument("--rot", action='store_true', default=False,
                     help='rotate or not [True/False]')
 parser.add_argument("--train_w", action='store_true', default=False,
                     help='whether to learn linear proj')
@@ -100,49 +100,6 @@ def main():
     if FLAGS.anomalous:
         opts['use_anomalous'] = FLAGS.anomalous
 
-    # Exp setup
-    """    # multi configs of training w, D, constrained D
-    exp = list(itertools.product([False,],
-                                [False,],
-                                [False,],
-                                [0. ,0., 0., 0.]
-                                ))
-    exp += list(itertools.product([False,],
-                                [True,],
-                                [False, True],
-                                [0. ,0., 0., 0.]
-                                ))
-    exp_id = (FLAGS.exp_id-1) % len(exp)
-    opts['train_w'] = exp[exp_id][0]
-    opts['train_d'] = exp[exp_id][1]
-    opts['d_const'] = exp[exp_id][2]
-    opts['lmbda'] = exp[exp_id][3]
-    if opts['train_w']:
-        opts['gamma'] = FLAGS.gamma
-    else:
-        opts['gamma'] = 0.
-    """
-    """ # Different alpha reg and lambda combination
-    exp = list(itertools.product([0.1, 1., 10.],
-                                [0.1, 1., 10.]))
-    # setting exp id
-    exp_id = (FLAGS.exp_id-1) % len(exp)
-    opts['lmbda'] = exp[exp_id][0]
-    opts['d_reg_value'] =  exp[exp_id][1]
-    opts['train_w'] = FLAGS.train_w
-    if opts['train_w']:
-        opts['gamma'] = FLAGS.gamma
-    else:
-        opts['gamma'] = 0.
-    opts['train_d'] = FLAGS.train_d
-    opts['d_const'] = FLAGS.d_const
-    """
-    # Different scaling factor for non affine model
-    exp = [2,4,6,8,10]
-    # setting exp id
-    exp_id = (FLAGS.exp_id-1) % len(exp)
-    opts['nsteps'] = exp[exp_id]
-
     # Model set up
     opts['flow'] = FLAGS.flow
     opts['normalization'] = FLAGS.norm
@@ -159,6 +116,14 @@ def main():
     else:
         opts['lmbda'] = 0.
     opts['d_const'] = FLAGS.d_const
+    # Different scaling factor for non affine model
+    if opts['flow']=='planar':
+        exp = [1,2,3,4,5]
+    elif opts['flow']=='glow':
+        exp = [2,4,6,8,10]
+    # setting exp id
+    exp_id = (FLAGS.exp_id-1) % len(exp)
+    opts['nsteps'] = exp[exp_id]
 
     # Create directories
     if FLAGS.res_dir:
@@ -200,9 +165,9 @@ def main():
     opts['it_num'] = FLAGS.num_it
     opts['batch_size'] = FLAGS.batch_size
     opts['lr'] = FLAGS.lr
-    opts['plot_every'] = 100 #2500 #int(opts['print_every'] / 2.) + 1
+    opts['plot_every'] = 2500 #int(opts['print_every'] / 2.) + 1
     opts['evaluate_every'] = int(opts['plot_every'] / 10.)
-    opts['plot_hm'] = False
+    opts['plot_hm'] = True
     opts['plot_trans'] = True
     opts['save_every'] = 1000000000
     opts['save_final'] = FLAGS.save_model
