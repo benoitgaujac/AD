@@ -30,7 +30,7 @@ parser.add_argument("--num_it", type=int, default=10000,
                     help='iteration number')
 parser.add_argument("--batch_size", type=int, default=100,
                     help='batch size')
-parser.add_argument("--lr", type=float, default=0.001,
+parser.add_argument("--lr", type=float, default=0.0001,
                     help='learning rate size')
 # path setup
 parser.add_argument("--res_dir", type=str,
@@ -165,7 +165,7 @@ def main():
     opts['it_num'] = FLAGS.num_it
     opts['batch_size'] = FLAGS.batch_size
     opts['lr'] = FLAGS.lr
-    opts['plot_every'] = 2500 #int(opts['print_every'] / 2.) + 1
+    opts['plot_every'] = 1000 #int(opts['print_every'] / 2.) + 1
     opts['evaluate_every'] = int(opts['plot_every'] / 10.)
     opts['plot_hm'] = True
     opts['plot_trans'] = True
